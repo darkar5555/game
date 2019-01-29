@@ -16,10 +16,16 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <vector>
+#include <math.h>
+
 // Other includes
 #include "Shader.h"
 #include "Camera.h"
 #include "Texture.h"
+#include "Box.h"
+#include "Light.h"
+#include "Coins.h"
 
 
 // Function prototypes
@@ -44,6 +50,13 @@ glm::vec3 lightPos( 1.2f, 1.0f, 2.0f );
 // Deltatime
 GLfloat deltaTime = 0.0f;    // Time between current frame and last frame
 GLfloat lastFrame = 0.0f;      // Time of last frame
+
+
+// Funcion de collision
+float collision(glm::vec3 a, glm::vec3 b){
+    return sqrt(pow(a.x-b.x,2)+pow(a.y-b.y,2)+pow(a.z-b.z,2));
+}
+
 
 // The MAIN function, from here we start the application and run the game loop
 int main( )
@@ -147,18 +160,18 @@ int main( )
     };
     
     // Positions all containers
-    glm::vec3 cubePositions[] = {
-        glm::vec3(  0.0f,   0.0f,   0.0f    ),
-        glm::vec3(  2.0f,   5.0f,   -15.0f  ),
-        glm::vec3(  -1.5f,  -2.2f,  -2.5f   ),
-        glm::vec3(  -3.8f,  -2.0f,  -12.3f  ),
-        glm::vec3(  2.4f,   -0.4f,  -3.5f   ),
-        glm::vec3(  -1.7f,  3.0f,   -7.5f   ),
-        glm::vec3(  1.3f,   -2.0f,  -2.5f   ),
-        glm::vec3(  1.5f,   2.0f,   -2.5f   ),
-        glm::vec3(  1.5f,   0.2f,   -1.5f   ),
-        glm::vec3(  -1.3f,  1.0f,   -1.5f   )
-    };
+//    glm::vec3 cubePositions[] = {
+//        glm::vec3(  0.0f,   0.0f,   0.0f    ),
+//        glm::vec3(  2.0f,   5.0f,   -15.0f  ),
+//        glm::vec3(  -1.5f,  -2.2f,  -2.5f   ),
+//        glm::vec3(  -3.8f,  -2.0f,  -12.3f  ),
+//        glm::vec3(  2.4f,   -0.4f,  -3.5f   ),
+//        glm::vec3(  -1.7f,  3.0f,   -7.5f   ),
+//        glm::vec3(  1.3f,   -2.0f,  -2.5f   ),
+//        glm::vec3(  1.5f,   2.0f,   -2.5f   ),
+//        glm::vec3(  1.5f,   0.2f,   -1.5f   ),
+//        glm::vec3(  -1.3f,  1.0f,   -1.5f   )
+//    };
     
     // Positions of the point lights
     glm::vec3 pointLightPositions[] = {
@@ -197,13 +210,23 @@ int main( )
     glBindVertexArray( 0 );
     
     // Load textures
-    GLuint diffuseMap, specularMap, emissionMap;
+    GLuint diffuseMap, specularMap, emissionMap, diffuseMapCoin, specularMapCoin;
     glGenTextures( 1, &diffuseMap );
     glGenTextures( 1, &specularMap );
     glGenTextures( 1, &emissionMap );
+    glGenTextures( 1, &diffuseMapCoin);
+    glGenTextures( 1, &specularMapCoin);
     
     int imageWidth, imageHeight;
     unsigned char *image;
+    
+    // Variables de Textura
+    GLuint cubeTexture = TextureLoading::LoadTexture("resources/images/container2.png");
+    Box cubos;
+    Coin coins;
+    GLuint coinTexture = TextureLoading::LoadTexture("resources/images/moneda.jpg");
+//    GLuint probando = Box::LoadBox();
+
     
     // Diffuse map
     image = SOIL_load_image( "resources/images/container2.png", &imageWidth, &imageHeight, 0, SOIL_LOAD_RGB );
@@ -219,6 +242,31 @@ int main( )
     // Specular map
     image = SOIL_load_image( "resources/images/container2_specular.png", &imageWidth, &imageHeight, 0, SOIL_LOAD_RGB );
     glBindTexture( GL_TEXTURE_2D, specularMap );
+    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGB, imageWidth, imageHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, image );
+    glGenerateMipmap( GL_TEXTURE_2D );
+    SOIL_free_image_data( image );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST );
+    glBindTexture( GL_TEXTURE_2D, 0 );
+    
+    
+    //texturas de la moneda
+    // Diffuse map
+    image = SOIL_load_image( "resources/images/coins.jpg", &imageWidth, &imageHeight, 0, SOIL_LOAD_RGB );
+    glBindTexture( GL_TEXTURE_2D, diffuseMapCoin );
+    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGB, imageWidth, imageHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, image );
+    glGenerateMipmap( GL_TEXTURE_2D );
+    SOIL_free_image_data( image );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST );
+    
+    // Specular map
+    image = SOIL_load_image( "resources/images/coins.jpg", &imageWidth, &imageHeight, 0, SOIL_LOAD_RGB );
+    glBindTexture( GL_TEXTURE_2D, specularMapCoin );
     glTexImage2D( GL_TEXTURE_2D, 0, GL_RGB, imageWidth, imageHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, image );
     glGenerateMipmap( GL_TEXTURE_2D );
     SOIL_free_image_data( image );
@@ -338,15 +386,65 @@ int main( )
         glActiveTexture( GL_TEXTURE1 );
         glBindTexture( GL_TEXTURE_2D, specularMap );
         
+        
+        //para dibujar las monedas
+//        GLuint coinTexture = TextureLoading::LoadTexture("resources/images/pusheen.png");
+//
+//        glActiveTexture( GL_TEXTURE0 );
+//        glBindTexture( GL_TEXTURE_2D, coinTexture );
+//
         // Draw 10 containers with the same VAO and VBO information; only their world space coordinates differ
         glm::mat4 model( 1.0f );
         glBindVertexArray( boxVAO );
-        for ( GLuint i = 0; i < 10; i++ )
+        for ( GLuint i = 0; i < cubos.cubePositions.size()-4; i++ )
         {
             model = glm::mat4( 1.0f );
-            model = glm::translate( model, cubePositions[i] );
+            model = glm::translate( model, cubos.cubePositions[i] );
+//            model = glm::translate( model, coins.coinsPositions[i]);
+            GLfloat dist = collision(coins.coinsPositions[i], cubos.cubePositions[i]);
+            if (dist<8.0f){
+               // cout<<"hubo una collision";
+                cubos.exploited[i] = true;
+                cubos.updatePosition();
+            }
             GLfloat angle = 20.0f * i;
             model = glm::rotate( model, angle, glm::vec3( 1.0f, 0.3f, 0.5f ) );
+            cubos.movement();
+            glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
+            
+            glDrawArrays( GL_TRIANGLES, 0, 36 );
+        }
+        glBindVertexArray( 0 );
+        
+        
+        // Dibujando las monedas
+        // Bind diffuse map
+        glUniformMatrix4fv( viewLoc, 1, GL_FALSE, glm::value_ptr( view ) );
+        glUniformMatrix4fv( projLoc, 1, GL_FALSE, glm::value_ptr( projection ) );
+        
+        // Bind diffuse map
+        glActiveTexture( GL_TEXTURE0 );
+        glBindTexture( GL_TEXTURE_2D, diffuseMapCoin );
+        // Bind specular map
+        glActiveTexture( GL_TEXTURE1 );
+        glBindTexture( GL_TEXTURE_2D, specularMapCoin );
+        glBindVertexArray( boxVAO );
+        for ( GLuint i = 0; i < coins.coinsPositions.size()-4; i++ )
+        {
+            model = glm::mat4( 1.0f );
+            model = glm::translate( model, coins.coinsPositions[i] );
+            //            model = glm::translate( model, coins.coinsPositions[i]);
+//            GLfloat dist = collision(coins.coinsPositions[i], cubos.cubePositions[i]);
+//            GLfloat angle = 20.0f * i;
+            model = glm::rotate( model, 30.0f, glm::vec3( 1.0f, 0.3f, 0.5f ) );
+            GLfloat dist = collision(coins.coinsPositions[i], cubos.cubePositions[i]);
+            if (dist<8.0f){
+                // cout<<"hubo una collision";
+                coins.gotcha[i] = true;
+                coins.updateCoins();
+            }
+
+            coins.movement();
             glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
             
             glDrawArrays( GL_TRIANGLES, 0, 36 );

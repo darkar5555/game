@@ -26,14 +26,54 @@
 #include "Shader.h"
 #include "Camera.h"
 #include "Texture.h"
+#include <vector>
+#include <math.h>
+#include <stdlib.h>
+#include <time.h>
+
+
+using namespace std;
 
 class Box {
     
-    
-    
-
-    
 public:
+    vector<glm::vec3> cubePositions;
+    vector<bool> exploited;
+    Box(){
+        cubePositions.push_back(glm::vec3(  rand()%10-1,  0.0f,  -rand()%10 ));
+        cubePositions.push_back(glm::vec3(  rand()%10-1,  0.0f,  -rand()%10 ));
+        cubePositions.push_back(glm::vec3(  rand()%10-1,  0.0f,  -rand()%10 ));
+        cubePositions.push_back(glm::vec3(  rand()%10-1,  0.0f,  -rand()%10 ));
+        cubePositions.push_back(glm::vec3(  rand()%10-1,  0.0f,  -rand()%10 ));
+        cubePositions.push_back(glm::vec3(  rand()%10-1,  0.0f,  -rand()%10 ));
+        exploited.push_back(false);
+        exploited.push_back(false);
+        exploited.push_back(false);
+        exploited.push_back(false);
+        exploited.push_back(false);
+        exploited.push_back(false);
+    }
+    
+    void movement(){
+        for (int i = 0; i < cubePositions.size(); i++) {
+            cubePositions[i].z += 0.001 ;
+            if (cubePositions[i].z >= 10) {
+                cubePositions[i].x = rand()%10-1;
+                cubePositions[i].z = -rand()%10;
+            }
+        }
+    }
+    
+    void updatePosition(){
+        for (int i = 0; i < cubePositions.size(); i++) {
+            if (exploited[i] == true) {
+                cubePositions[i] = glm::vec3(  rand()%10-1,  0.0f,  -rand()%10 );
+                cout<< "Colicionaron conmigo soy un cubo"<<endl;
+            }
+                
+        }
+    }
+    
     static GLuint LoadBox(){
         GLuint cubeVAO, cubeVBO;
         GLfloat vertices[] = {
