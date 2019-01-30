@@ -40,6 +40,7 @@ class Player {
 public:
     glm::vec3 playerPosition;
     GLfloat movementSpeed;
+    GLfloat movementJump;
     glm::vec3 lefth;
     glm::vec3 up;
     glm::vec3 right;
@@ -53,12 +54,14 @@ public:
         right = glm::vec3 ( 1.0f, 0.0f, 0.0f );
         jump = glm::vec3 ( 0.0f, 1.0f, 0.0f );
         movementSpeed = 6.0f;
+        movementJump = 4.0f;
         jumpPresed = false;
     }
     
     void ProcessKeyboard( Player_Movement direction, GLfloat deltaTime )
     {
         GLfloat velocity = this->movementSpeed * deltaTime;
+        GLfloat velocityJump = this->movementJump * deltaTime;
 
         if ( direction == DERECHA )
         {
@@ -79,14 +82,20 @@ public:
 //                //            this->playerPosition.y -= 5.0f * velocity;
 //            }
 //            while( playerPosition.y < 3.0f ){
+//                this->playerPosition += this->jump * velocityJump;
+//                cout<<"El salto falta mejorar"<<endl;
+////            }
+//                while (jumpPresed == false && playerPosition.y >4.0f) {
+//                    playerPosition = glm::vec3( 0.0f, 0.0f, 0.0f );
+//                    jumpPresed = true;
+//                }
+            
+            
+            while( playerPosition.y < 4.0f ){
+                cout<< playerPosition.y<<endl;
                 this->playerPosition += this->jump * velocity;
                 cout<<"El salto falta mejorar"<<endl;
-//            }
-//            while( playerPosition.y > 0.0f ){
-//                cout<< playerPosition.y<<endl;
-//                this->playerPosition -= this->jump * velocity;
-//                cout<<"El salto falta mejorar"<<endl;
-//            }
+            }
 
 //            for (GLfloat i = 7.0f; i >= 0.0f  ; i = i-.1f) {
 //                this->playerPosition -= this->jump * velocity;
