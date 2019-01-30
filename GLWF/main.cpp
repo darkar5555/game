@@ -26,12 +26,14 @@
 #include "Box.h"
 #include "Light.h"
 #include "Coins.h"
+#include "Player.h"
 
 
 // Function prototypes
 void KeyCallback( GLFWwindow *window, int key, int scancode, int action, int mode );
 void MouseCallback( GLFWwindow *window, double xPos, double yPos );
 void DoMovement( );
+void MovePlayer( );
 
 // Window dimensions
 const GLuint WIDTH = 800, HEIGHT = 600;
@@ -43,6 +45,11 @@ GLfloat lastX = WIDTH / 2.0;
 GLfloat lastY = HEIGHT / 2.0;
 bool keys[1024];
 bool firstMouse = true;
+
+// Player
+Player player;
+
+
 
 // Light attributes
 glm::vec3 lightPos( 1.2f, 1.0f, 2.0f );
@@ -158,21 +165,7 @@ int main( )
         -0.5f,  0.5f,  0.5f,    0.0f,  1.0f,  0.0f,     0.0f,  0.0f,
         -0.5f,  0.5f, -0.5f,    0.0f,  1.0f,  0.0f,     0.0f,  1.0f
     };
-    
-    // Positions all containers
-//    glm::vec3 cubePositions[] = {
-//        glm::vec3(  0.0f,   0.0f,   0.0f    ),
-//        glm::vec3(  2.0f,   5.0f,   -15.0f  ),
-//        glm::vec3(  -1.5f,  -2.2f,  -2.5f   ),
-//        glm::vec3(  -3.8f,  -2.0f,  -12.3f  ),
-//        glm::vec3(  2.4f,   -0.4f,  -3.5f   ),
-//        glm::vec3(  -1.7f,  3.0f,   -7.5f   ),
-//        glm::vec3(  1.3f,   -2.0f,  -2.5f   ),
-//        glm::vec3(  1.5f,   2.0f,   -2.5f   ),
-//        glm::vec3(  1.5f,   0.2f,   -1.5f   ),
-//        glm::vec3(  -1.3f,  1.0f,   -1.5f   )
-//    };
-    
+        
     // Positions of the point lights
     glm::vec3 pointLightPositions[] = {
         glm::vec3(  0.7f,  0.2f,  2.0f      ),
@@ -296,6 +289,8 @@ int main( )
         glfwPollEvents( );
         DoMovement( );
         
+        MovePlayer();
+        
         // Clear the colorbuffer
         glClearColor( 0.1f, 0.1f, 0.1f, 1.0f );
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
@@ -401,11 +396,12 @@ int main( )
             model = glm::mat4( 1.0f );
             model = glm::translate( model, cubos.cubePositions[i] );
 //            model = glm::translate( model, coins.coinsPositions[i]);
-            GLfloat dist = collision(coins.coinsPositions[i], cubos.cubePositions[i]);
-            if (dist<8.0f){
+            GLfloat dist = collision(player.playerPosition, cubos.cubePositions[i]);
+            if (dist<1.5f){
                // cout<<"hubo una collision";
                 cubos.exploited[i] = true;
                 cubos.updatePosition();
+                cubos.exploited[i] = false;
             }
             GLfloat angle = 20.0f * i;
             model = glm::rotate( model, angle, glm::vec3( 1.0f, 0.3f, 0.5f ) );
@@ -437,11 +433,12 @@ int main( )
 //            GLfloat dist = collision(coins.coinsPositions[i], cubos.cubePositions[i]);
 //            GLfloat angle = 20.0f * i;
             model = glm::rotate( model, 30.0f, glm::vec3( 1.0f, 0.3f, 0.5f ) );
-            GLfloat dist = collision(coins.coinsPositions[i], cubos.cubePositions[i]);
-            if (dist<8.0f){
+            GLfloat dist = collision(coins.coinsPositions[i], player.playerPosition);
+            if (dist<1.5f){
                 // cout<<"hubo una collision";
                 coins.gotcha[i] = true;
                 coins.updateCoins();
+                coins.gotcha[i] = false;
             }
 
             coins.movement();
@@ -450,6 +447,33 @@ int main( )
             glDrawArrays( GL_TRIANGLES, 0, 36 );
         }
         glBindVertexArray( 0 );
+        
+        
+        
+        
+        // Creando el player
+        glUniformMatrix4fv( viewLoc, 1, GL_FALSE, glm::value_ptr( view ) );
+        glUniformMatrix4fv( projLoc, 1, GL_FALSE, glm::value_ptr( projection ) );
+        
+        // Bind diffuse map
+        glActiveTexture( GL_TEXTURE0 );
+        glBindTexture( GL_TEXTURE_2D, diffuseMapCoin );
+        // Bind specular map
+        glActiveTexture( GL_TEXTURE1 );
+        glBindTexture( GL_TEXTURE_2D, specularMapCoin );
+        glBindVertexArray( boxVAO );
+        model = glm::mat4( 1.0f );
+        model = glm::translate( model, player.playerPosition );
+        model = glm::rotate( model, 30.0f, glm::vec3( 1.0f, 0.3f, 0.5f ) );
+        glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
+        glDrawArrays( GL_TRIANGLES, 0, 36 );
+        glBindVertexArray( 0 );
+
+
+
+        
+        
+        
         
         
         // Also draw the lamp object, again binding the appropriate shader
@@ -519,6 +543,22 @@ void DoMovement( )
     if ( keys[GLFW_KEY_D] || keys[GLFW_KEY_RIGHT] )
     {
         camera.ProcessKeyboard( RIGHT, deltaTime );
+    }
+}
+
+void MovePlayer(){
+    // Player controls
+    if ( keys[GLFW_KEY_U] ) {
+        player.ProcessKeyboard( SALTO, deltaTime );
+    }
+    if ( keys[GLFW_KEY_H]) {
+        player.ProcessKeyboard( IZQUIERDA, deltaTime );
+    }
+    if ( keys[GLFW_KEY_K] ) {
+        player.ProcessKeyboard( DERECHA, deltaTime );
+    }
+    if ( keys[GLFW_KEY_J] ) {
+        player.ProcessKeyboard( PROTECCION, deltaTime );
     }
 }
 
