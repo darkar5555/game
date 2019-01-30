@@ -56,7 +56,7 @@ public:
     
     void movement(){
         for (int i = 0; i < cubePositions.size(); i++) {
-            cubePositions[i].z += 0.0001 ;
+            cubePositions[i].z += 0.001 ;
             if (cubePositions[i].z >= 10) {
                 cubePositions[i].x = rand()%10-1;
                 cubePositions[i].z = -rand()%10;

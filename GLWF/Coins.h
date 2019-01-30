@@ -55,7 +55,7 @@ public:
     }
     void movement(){
         for (int i = 0; i < coinsPositions.size(); i++) {
-            coinsPositions[i].z += 0.0001 ;
+            coinsPositions[i].z += 0.001 ;
             if (coinsPositions[i].z >= 10) {
                 coinsPositions[i].x = rand()%10-1;
                 coinsPositions[i].z = -rand()%10;
