@@ -44,6 +44,7 @@ public:
     glm::vec3 up;
     glm::vec3 right;
     glm::vec3 jump;
+    glm::vec3 front;
     bool jumpPresed;
 
     
@@ -51,10 +52,11 @@ public:
         playerPosition = glm::vec3 (0.0f, 0.0f, 0.0f);
         lefth = glm::vec3 (-1.0f, 0.0f, 0.0f);
         right = glm::vec3 ( 1.0f, 0.0f, 0.0f );
-        jump = glm::vec3 ( 0.0f, 1.0f, 0.0f );
+        jump = glm::vec3 ( 0.0f, 0.05f, 0.0f );
         movementSpeed = 6.0f;
-        movementJump = 0.0f;
+        movementJump = 4.0f;
         jumpPresed = false;
+        front = glm::vec3 ( 0.0f, 0.0f, -1.0f );
     }
     
     void ProcessKeyboard( Player_Movement direction, GLfloat deltaTime )
@@ -82,7 +84,7 @@ public:
         }
 //        cout<<this->playerPosition.y<< " ";
         if ( this->playerPosition.y <= 3.0f && jumpPresed == true ){
-            this->playerPosition += this->jump * velocity;
+            this->playerPosition += this->jump * velocityJump;
             if (this->playerPosition.y > 2.6f ){
                 jumpPresed = false;
                 cout<<"jump presses igual a falseo"<< endl;
@@ -90,13 +92,14 @@ public:
             }
         }
         if ( this->playerPosition.y != 0.0f && jumpPresed == false ){
-            this->playerPosition -=  this->jump * velocity;
+            this->playerPosition -=  this->jump * velocityJump;
             if ( this->playerPosition.y <= 0.0f){
                 jumpPresed = true;
                 this->playerPosition.y = 0.0f;
                 jump = glm::vec3 (0.0f,0.0f,0.0f);
             }
         }
+    
         
 
         if ( direction == PROTECCION )
@@ -105,6 +108,17 @@ public:
             cout<< jumpPresed;
         }
     }
+    
+    glm::vec3 GetPosition( )
+    {
+        return this->playerPosition;
+    }
+    
+    glm::vec3 GetFront( )
+    {
+        return this->front;
+    }
+
     
 };
 

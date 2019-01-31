@@ -43,12 +43,12 @@ public:
     vector<bool> exploited;
     
     Box(){
-        cubePositions.push_back(glm::vec3(  rand()%10-1,  0.0f,  -rand()%10 ));
-        cubePositions.push_back(glm::vec3(  rand()%10-1,  0.0f,  -rand()%10 ));
-        cubePositions.push_back(glm::vec3(  rand()%10-1,  0.0f,  -rand()%10 ));
-        cubePositions.push_back(glm::vec3(  rand()%10-1,  0.0f,  -rand()%10 ));
-        cubePositions.push_back(glm::vec3(  rand()%10-1,  0.0f,  -rand()%10 ));
-        cubePositions.push_back(glm::vec3(  rand()%10-1,  0.0f,  -rand()%10 ));
+        cubePositions.push_back(glm::vec3(  rand()%4-2,  0.0f,  -300.0f ));
+        cubePositions.push_back(glm::vec3(  rand()%4-2,  0.0f,    -300.0f ));
+        cubePositions.push_back(glm::vec3(  rand()%4-2,  0.0f,  -200.0f ));
+        cubePositions.push_back(glm::vec3(  rand()%4-2,  0.0f,  -180.0f ));
+        cubePositions.push_back(glm::vec3(  rand()%4-2,  0.0f,  -120.0f ));
+        cubePositions.push_back(glm::vec3(  rand()%4-2,  0.0f,  -50.0f ));
         exploited.push_back(false);
         exploited.push_back(false);
         exploited.push_back(false);
@@ -60,7 +60,7 @@ public:
     void movement(GLfloat deltaTime){
         GLfloat velocity = velocidad * deltaTime;
         for (int i = 0; i < cubePositions.size(); i++) {
-            cubePositions[i].z +=  1.0f * velocity;
+            cubePositions[i].z +=  0.1f * velocity;
             if (cubePositions[i].z >= 10) {
                 cubePositions[i].x = rand()%10-1;
                 cubePositions[i].z = -rand()%10;

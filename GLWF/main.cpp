@@ -41,8 +41,13 @@ void MovePlayer( );
 
 
 
+
+// Player lifes and score
+GLfloat score = 0.0f;
+GLfloat lifes = 3.0f;
+
 // Camera
-Camera  camera( glm::vec3( 0.0f, 0.0f, 3.0f ) );
+Camera  camera( glm::vec3( 0.0f, 1.5f, 5.0f ) );
 GLfloat lastX = WIDTH / 2.0;
 GLfloat lastY = HEIGHT / 2.0;
 bool keys[1024];
@@ -373,9 +378,21 @@ int main( )
         glUniform1f( glGetUniformLocation( lightingShader.Program, "pointLights[3].linear" ), 0.09f );
         glUniform1f( glGetUniformLocation( lightingShader.Program, "pointLights[3].quadratic" ), 0.032f );
         
-        // SpotLight
-        glUniform3f( glGetUniformLocation( lightingShader.Program, "spotLight.position" ), camera.GetPosition( ).x, camera.GetPosition( ).y, camera.GetPosition( ).z );
-        glUniform3f( glGetUniformLocation( lightingShader.Program, "spotLight.direction" ), camera.GetFront( ).x, camera.GetFront( ).y, camera.GetFront( ).z );
+//        // SpotLight
+//        glUniform3f( glGetUniformLocation( lightingShader.Program, "spotLight.position" ), camera.GetPosition( ).x, camera.GetPosition( ).y, camera.GetPosition( ).z );
+//        glUniform3f( glGetUniformLocation( lightingShader.Program, "spotLight.direction" ), camera.GetFront( ).x, camera.GetFront( ).y, camera.GetFront( ).z );
+//        glUniform3f( glGetUniformLocation( lightingShader.Program, "spotLight.ambient" ), 0.0f, 0.0f, 0.0f );
+//        glUniform3f( glGetUniformLocation( lightingShader.Program, "spotLight.diffuse" ), 1.0f, 1.0f, 1.0f );
+//        glUniform3f( glGetUniformLocation( lightingShader.Program, "spotLight.specular" ), 1.0f, 1.0f, 1.0f );
+//        glUniform1f( glGetUniformLocation( lightingShader.Program, "spotLight.constant" ), 1.0f );
+//        glUniform1f( glGetUniformLocation( lightingShader.Program, "spotLight.linear" ), 0.09f );
+//        glUniform1f( glGetUniformLocation( lightingShader.Program, "spotLight.quadratic" ), 0.032f );
+//        glUniform1f( glGetUniformLocation( lightingShader.Program, "spotLight.cutOff" ), glm::cos( glm::radians( 12.5f ) ) );
+//        glUniform1f( glGetUniformLocation( lightingShader.Program, "spotLight.outerCutOff" ), glm::cos( glm::radians( 15.0f ) ) );
+        
+        // Spotlight player
+        glUniform3f( glGetUniformLocation( lightingShader.Program, "spotLight.position" ), player.GetPosition( ).x, player.GetPosition( ).y, player.GetPosition( ).z );
+        glUniform3f( glGetUniformLocation( lightingShader.Program, "spotLight.direction" ), player.GetFront( ).x, player.GetFront( ).y, player.GetFront( ).z );
         glUniform3f( glGetUniformLocation( lightingShader.Program, "spotLight.ambient" ), 0.0f, 0.0f, 0.0f );
         glUniform3f( glGetUniformLocation( lightingShader.Program, "spotLight.diffuse" ), 1.0f, 1.0f, 1.0f );
         glUniform3f( glGetUniformLocation( lightingShader.Program, "spotLight.specular" ), 1.0f, 1.0f, 1.0f );
@@ -414,7 +431,7 @@ int main( )
         // Draw 10 containers with the same VAO and VBO information; only their world space coordinates differ
         glm::mat4 model( 1.0f );
         glBindVertexArray( boxVAO );
-        for ( GLuint i = 0; i < cubos.cubePositions.size()-4; i++ )
+        for ( GLuint i = 0; i < cubos.cubePositions.size(); i++ )
         {
             model = glm::mat4( 1.0f );
             model = glm::translate( model, cubos.cubePositions[i] );
@@ -426,8 +443,8 @@ int main( )
                 cubos.updatePosition();
                 cubos.exploited[i] = false;
             }
-            GLfloat angle = 20.0f * i;
-            model = glm::rotate( model, angle, glm::vec3( 1.0f, 0.3f, 0.5f ) );
+//            GLfloat angle = 20.0f * i;
+            model = glm::rotate( model, 0.0f, glm::vec3( 1.0f, 0.0f, 0.0f ) );
             cubos.movement(deltaTime);
             glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
             
@@ -448,7 +465,7 @@ int main( )
         glActiveTexture( GL_TEXTURE1 );
         glBindTexture( GL_TEXTURE_2D, specularMapCoin );
         glBindVertexArray( boxVAO );
-        for ( GLuint i = 0; i < coins.coinsPositions.size()-4; i++ )
+        for ( GLuint i = 0; i < coins.coinsPositions.size(); i++ )
         {
             model = glm::mat4( 1.0f );
             model = glm::translate( model, coins.coinsPositions[i] );
@@ -462,6 +479,7 @@ int main( )
                 coins.gotcha[i] = true;
                 coins.updateCoins();
                 coins.gotcha[i] = false;
+                score = score + coins.valor;
             }
 
             coins.movement();
@@ -529,6 +547,8 @@ int main( )
             glDrawArrays( GL_TRIANGLES, 0, 36 );
         }
         glBindVertexArray( 0 );
+        
+        cout<< score<<endl;
         
         // Swap the screen buffers
         glfwSwapBuffers( window );

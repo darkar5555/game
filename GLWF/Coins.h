@@ -38,20 +38,22 @@ class Coin {
 public:
     vector<glm::vec3> coinsPositions;
     vector<bool> gotcha;
+    GLfloat valor;
 
     Coin(){
-        coinsPositions.push_back(glm::vec3(  rand()%10-1,  0.0f,  -rand()%10 ));
-        coinsPositions.push_back(glm::vec3(  rand()%10-1,  0.0f,  -rand()%10 ));
-        coinsPositions.push_back(glm::vec3(  rand()%10-1,  0.0f,  -rand()%10 ));
-        coinsPositions.push_back(glm::vec3(  rand()%10-1,  0.0f,  -rand()%10 ));
-        coinsPositions.push_back(glm::vec3(  rand()%10-1,  0.0f,  -rand()%10 ));
-        coinsPositions.push_back(glm::vec3(  rand()%10-1,  0.0f,  -rand()%10 ));
+        coinsPositions.push_back(glm::vec3(  rand()%4-2,  0.0f,  -rand()%15));
+        coinsPositions.push_back(glm::vec3(  rand()%4-2,  0.0f,  -rand()%15 ));
+        coinsPositions.push_back(glm::vec3(  rand()%4-2,  0.0f,  -rand()%15 ));
+        coinsPositions.push_back(glm::vec3(  rand()%4-2,  0.0f,  -rand()%15 ));
+        coinsPositions.push_back(glm::vec3(  rand()%4-2,  0.0f,  -rand()%15 ));
+        coinsPositions.push_back(glm::vec3(  rand()%4-2,  0.0f,  -rand()%15 ));
         gotcha.push_back(false);
         gotcha.push_back(false);
         gotcha.push_back(false);
         gotcha.push_back(false);
         gotcha.push_back(false);
         gotcha.push_back(false);
+        valor = 10.0f;
     }
     void movement(){
         for (int i = 0; i < coinsPositions.size(); i++) {
