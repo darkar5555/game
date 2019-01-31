@@ -28,6 +28,10 @@
 #include "Coins.h"
 #include "Player.h"
 
+// Window dimensions
+const GLuint WIDTH = 800, HEIGHT = 600;
+int SCREEN_WIDTH, SCREEN_HEIGHT;
+
 
 // Function prototypes
 void KeyCallback( GLFWwindow *window, int key, int scancode, int action, int mode );
@@ -35,9 +39,7 @@ void MouseCallback( GLFWwindow *window, double xPos, double yPos );
 void DoMovement( );
 void MovePlayer( );
 
-// Window dimensions
-const GLuint WIDTH = 800, HEIGHT = 600;
-int SCREEN_WIDTH, SCREEN_HEIGHT;
+
 
 // Camera
 Camera  camera( glm::vec3( 0.0f, 0.0f, 3.0f ) );
@@ -118,6 +120,7 @@ int main( )
     // Build and compile our shader program
     Shader lightingShader( "resources/shaders/lighting.vs", "resources/shaders/lighting.frag" );
     Shader lampShader( "resources/shaders/lamp.vs", "resources/shaders/lamp.frag" );
+
     
     // Set up vertex data (and buffer(s)) and attribute pointers
     GLfloat vertices[] =
@@ -277,6 +280,8 @@ int main( )
     
     glm::mat4 projection = glm::perspective( camera.GetZoom( ), ( GLfloat )SCREEN_WIDTH / ( GLfloat )SCREEN_HEIGHT, 0.1f, 100.0f );
     
+    
+
     //MUisca del juego
     Mix_Chunk *sound = NULL;
     int channel;
@@ -303,7 +308,6 @@ int main( )
         GLfloat currentFrame = glfwGetTime( );
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
-        
         // Check if any events have been activiated (key pressed, mouse moved etc.) and call corresponding response functions
         glfwPollEvents( );
         DoMovement( );
