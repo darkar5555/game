@@ -34,11 +34,14 @@
 
 using namespace std;
 
+const GLfloat velocidad = 6.0f;
+
 class Box {
     
 public:
     vector<glm::vec3> cubePositions;
     vector<bool> exploited;
+    
     Box(){
         cubePositions.push_back(glm::vec3(  rand()%10-1,  0.0f,  -rand()%10 ));
         cubePositions.push_back(glm::vec3(  rand()%10-1,  0.0f,  -rand()%10 ));
@@ -54,9 +57,10 @@ public:
         exploited.push_back(false);
     }
     
-    void movement(){
+    void movement(GLfloat deltaTime){
+        GLfloat velocity = velocidad * deltaTime;
         for (int i = 0; i < cubePositions.size(); i++) {
-            cubePositions[i].z += 0.001 ;
+            cubePositions[i].z +=  1.0f * velocity;
             if (cubePositions[i].z >= 10) {
                 cubePositions[i].x = rand()%10-1;
                 cubePositions[i].z = -rand()%10;

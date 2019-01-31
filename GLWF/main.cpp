@@ -405,7 +405,7 @@ int main( )
             }
             GLfloat angle = 20.0f * i;
             model = glm::rotate( model, angle, glm::vec3( 1.0f, 0.3f, 0.5f ) );
-            cubos.movement();
+            cubos.movement(deltaTime);
             glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
             
             glDrawArrays( GL_TRIANGLES, 0, 36 );
@@ -548,7 +548,7 @@ void DoMovement( )
 
 void MovePlayer(){
     // Player controls
-    if ( keys[GLFW_KEY_U] ) {
+    if ( keys[GLFW_KEY_SPACE] ) {
         player.ProcessKeyboard( SALTO, deltaTime );
     }
     if ( keys[GLFW_KEY_H]) {

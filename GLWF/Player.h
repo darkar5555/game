@@ -31,7 +31,6 @@ enum Player_Movement
 
 
 
-const GLfloat velocidad      =  6.0f;
 
 
 class Player {
@@ -54,7 +53,7 @@ public:
         right = glm::vec3 ( 1.0f, 0.0f, 0.0f );
         jump = glm::vec3 ( 0.0f, 1.0f, 0.0f );
         movementSpeed = 6.0f;
-        movementJump = 4.0f;
+        movementJump = 0.0f;
         jumpPresed = false;
     }
     
@@ -73,45 +72,37 @@ public:
             this->playerPosition += this->lefth * velocity;
         }
 
-        if ( direction == SALTO && jumpPresed == false )
+        if ( direction == SALTO && playerPosition.y == 0.0f )
         {
 //            jumpPresed = true;
-//            for (GLfloat i = playerPosition.y; i <= 7.0f ; i = i + .1f) {
-//                this->playerPosition += this->jump * velocity;
-//                cout<<"El salto falta mejorar"<<endl;
-//                //            this->playerPosition.y -= 5.0f * velocity;
-//            }
-//            while( playerPosition.y < 3.0f ){
-//                this->playerPosition += this->jump * velocityJump;
-//                cout<<"El salto falta mejorar"<<endl;
-////            }
-//                while (jumpPresed == false && playerPosition.y >4.0f) {
-//                    playerPosition = glm::vec3( 0.0f, 0.0f, 0.0f );
-//                    jumpPresed = true;
-//                }
-            
-            
-            while( playerPosition.y < 4.0f ){
-                cout<< playerPosition.y<<endl;
-                this->playerPosition += this->jump * velocity;
-                cout<<"El salto falta mejorar"<<endl;
-            }
-
-//            for (GLfloat i = 7.0f; i >= 0.0f  ; i = i-.1f) {
-//                this->playerPosition -= this->jump * velocity;
-//                cout<< i<< endl;
-//                cout<<"El salto falta mejorar de bajada"<<endl;
-//                //            this->playerPosition.y -= 5.0f * velocity;
-//            }
-//            this->playerPosition = glm::vec3 (0.0f, 0.0f, 0.0f);
-        
-
-            
+            cout<< "entre al loop"<<endl;
+            movementJump = 4.0f;
+            jumpPresed = true;
+            jump = glm::vec3 (0.0f,1.0f,0.0f);
         }
+//        cout<<this->playerPosition.y<< " ";
+        if ( this->playerPosition.y <= 3.0f && jumpPresed == true ){
+            this->playerPosition += this->jump * velocity;
+            if (this->playerPosition.y > 2.6f ){
+                jumpPresed = false;
+                cout<<"jump presses igual a falseo"<< endl;
+                cout<<jumpPresed;
+            }
+        }
+        if ( this->playerPosition.y != 0.0f && jumpPresed == false ){
+            this->playerPosition -=  this->jump * velocity;
+            if ( this->playerPosition.y <= 0.0f){
+                jumpPresed = true;
+                this->playerPosition.y = 0.0f;
+                jump = glm::vec3 (0.0f,0.0f,0.0f);
+            }
+        }
+        
 
         if ( direction == PROTECCION )
         {
             cout<<"me tengo que proteger"<<endl;
+            cout<< jumpPresed;
         }
     }
     
