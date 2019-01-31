@@ -410,7 +410,7 @@ int main( )
         // Draw 10 containers with the same VAO and VBO information; only their world space coordinates differ
         glm::mat4 model( 1.0f );
         glBindVertexArray( boxVAO );
-        for ( GLuint i = 0; i < cubos.cubePositions.size()-4; i++ )
+        for ( GLuint i = 0; i < cubos.cubePositions.size(); i++ )
         {
             model = glm::mat4( 1.0f );
             model = glm::translate( model, cubos.cubePositions[i] );
@@ -444,7 +444,7 @@ int main( )
         glActiveTexture( GL_TEXTURE1 );
         glBindTexture( GL_TEXTURE_2D, specularMapCoin );
         glBindVertexArray( boxVAO );
-        for ( GLuint i = 0; i < coins.coinsPositions.size()-4; i++ )
+        for ( GLuint i = 0; i < coins.coinsPositions.size(); i++ )
         {
             model = glm::mat4( 1.0f );
             model = glm::translate( model, coins.coinsPositions[i] );

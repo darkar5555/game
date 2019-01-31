@@ -40,12 +40,12 @@ public:
     vector<bool> gotcha;
 
     Coin(){
-        coinsPositions.push_back(glm::vec3(  rand()%10-1,  0.0f,  -rand()%10 ));
-        coinsPositions.push_back(glm::vec3(  rand()%10-1,  0.0f,  -rand()%10 ));
-        coinsPositions.push_back(glm::vec3(  rand()%10-1,  0.0f,  -rand()%10 ));
-        coinsPositions.push_back(glm::vec3(  rand()%10-1,  0.0f,  -rand()%10 ));
-        coinsPositions.push_back(glm::vec3(  rand()%10-1,  0.0f,  -rand()%10 ));
-        coinsPositions.push_back(glm::vec3(  rand()%10-1,  0.0f,  -rand()%10 ));
+        coinsPositions.push_back(glm::vec3(  rand()%4-2,  0.0f,  -rand()%15));
+        coinsPositions.push_back(glm::vec3(  rand()%4-2,  0.0f,  -rand()%15 ));
+        coinsPositions.push_back(glm::vec3(  rand()%4-2,  0.0f,  -rand()%15 ));
+        coinsPositions.push_back(glm::vec3(  rand()%4-2,  0.0f,  -rand()%15 ));
+        coinsPositions.push_back(glm::vec3(  rand()%4-2,  0.0f,  -rand()%15 ));
+        coinsPositions.push_back(glm::vec3(  rand()%4-2,  0.0f,  -rand()%15 ));
         gotcha.push_back(false);
         gotcha.push_back(false);
         gotcha.push_back(false);
