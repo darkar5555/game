@@ -502,9 +502,11 @@ int main( )
         model = glm::mat4( 1.0f );
         model = glm::translate( model, player.playerPosition );
         model = glm::rotate( model, 30.0f, glm::vec3( 1.0f, 0.3f, 0.5f ) );
+        player.jumper(deltaTime);
         glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
         glDrawArrays( GL_TRIANGLES, 0, 36 );
         glBindVertexArray( 0 );
+        
 
 
 
