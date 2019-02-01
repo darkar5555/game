@@ -30,7 +30,6 @@ public:
     glm::vec3 up;
     glm::vec3 right;
     glm::vec3 front;
-    bool jumpPresed;
     string path;
     
     Wood(){
@@ -38,7 +37,13 @@ public:
         lefth = glm::vec3 (-1.0f, 0.0f, 0.0f);
         right = glm::vec3 ( 1.0f, 0.0f, 0.0f );
         movementSpeed = 6.0f;
-        jumpPresed = false;
+        front = glm::vec3 ( 0.0f, 0.0f, -1.0f );
+    }
+    Wood(glm::vec3 position){
+        woodPosition = position;
+        lefth = glm::vec3 (-1.0f, 0.0f, 0.0f);
+        right = glm::vec3 ( 1.0f, 0.0f, 0.0f );
+        movementSpeed = 6.0f;
         front = glm::vec3 ( 0.0f, 0.0f, -1.0f );
     }
     

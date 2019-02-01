@@ -41,6 +41,15 @@ public:
         jumpPresed = false;
         front = glm::vec3 ( 0.0f, 0.0f, -1.0f );
     }
+    Persona(glm::vec3 position){
+        personaPosition = position;
+        lefth = glm::vec3 (-1.0f, 0.0f, 0.0f);
+        right = glm::vec3 ( 1.0f, 0.0f, 0.0f );
+        movementSpeed = 6.0f;
+        jumpPresed = false;
+        front = glm::vec3 ( 0.0f, 0.0f, -1.0f );
+
+    }
     
     void DrawCar(GLint modelLoc, GLint viewLoc, GLint projLoc, Shader shader, Model ourModel, glm::mat4 view, glm::mat4 projection, glm::mat4 model){
         shader.Use();

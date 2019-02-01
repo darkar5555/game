@@ -41,6 +41,14 @@ public:
         jumpPresed = false;
         front = glm::vec3 ( 0.0f, 0.0f, -1.0f );
     }
+    Manzana(glm::vec3 position){
+        manzanaPosition = position;
+        lefth = glm::vec3 (-1.0f, 0.0f, 0.0f);
+        right = glm::vec3 ( 1.0f, 0.0f, 0.0f );
+        movementSpeed = 6.0f;
+        jumpPresed = false;
+        front = glm::vec3 ( 0.0f, 0.0f, -1.0f );
+    }
     
     void DrawCar(GLint modelLoc, GLint viewLoc, GLint projLoc, Shader shader, Model ourModel, glm::mat4 view, glm::mat4 projection, glm::mat4 model){
         shader.Use();
@@ -71,7 +79,7 @@ public:
         
         model=glm::mat4(1.0f);
         model=glm::translate(model,manzanaPosition);
-        model=glm::scale(model, glm::vec3(0.01f,0.01f,0.01f));
+        model=glm::scale(model, glm::vec3(0.01f, 0.01f, 0.01f));
         glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
         ourModel.Draw( shader );
         manzanaPosition += glm::vec3 ( 0.0f, 0.0f, 1.0f) * velocity;

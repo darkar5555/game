@@ -76,6 +76,12 @@ Persona persona;
 Tronco tronco;
 Wood wood;
 
+vector<Wood> woods;
+vector<Manzana> manzanas;
+vector<Fence> fences;
+vector<Persona> personas;
+vector<Tronco> troncos;
+
 // Light attributes
 glm::vec3 lightPos( 1.2f, 1.0f, 2.0f );
 
@@ -84,6 +90,9 @@ GLfloat deltaTime = 0.0f;    // Time between current frame and last frame
 GLfloat lastFrame = 0.0f;      // Time of last frame
 
 
+glm::vec3 positionRandom(){
+    return glm::vec3(  rand()%7-3,  0.0f,  -(rand()%300) + 20.0f );
+}
 
 
 // Funcion de collision
@@ -145,6 +154,39 @@ int main( )
     // Build and compile our shader program
     Shader lightingShader( "resources/shaders/lighting.vs", "resources/shaders/lighting.frag" );
     Shader lampShader( "resources/shaders/lamp.vs", "resources/shaders/lamp.frag" );
+    
+    
+    
+    // El for para crear varios woods, personas, faces, troncos, manzanas
+    for (int i = 0; i<10; i++) {
+        glm::vec3 temp = positionRandom();
+        Wood a(temp);
+        woods.push_back(a);
+    }
+    for (int i = 0; i<10; i++) {
+        glm::vec3 temp = positionRandom();
+        Tronco a(temp);
+        troncos.push_back(a);
+    }
+    for (int i = 0; i<10; i++) {
+        glm::vec3 temp = positionRandom();
+        Persona a(temp);
+        personas.push_back(a);
+    }
+    for (int i = 0; i<10; i++) {
+        glm::vec3 temp = positionRandom();
+        Fence a(temp);
+        fences.push_back(a);
+    }
+    for (int i = 0; i<20; i++) {
+        glm::vec3 temp = positionRandom();
+        Manzana a(temp);
+        manzanas.push_back(a);
+    }
+
+
+
+
     
     
     // Set up vertex data (and buffer(s)) and attribute pointers
@@ -275,30 +317,6 @@ int main( )
     glBindTexture( GL_TEXTURE_2D, 0 );
     
     
-    //texturas de la moneda
-    // Diffuse map
-    image = SOIL_load_image( "resources/images/coins.jpg", &imageWidth, &imageHeight, 0, SOIL_LOAD_RGB );
-    glBindTexture( GL_TEXTURE_2D, diffuseMapCoin );
-    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGB, imageWidth, imageHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, image );
-    glGenerateMipmap( GL_TEXTURE_2D );
-    SOIL_free_image_data( image );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST );
-    
-    // Specular map
-    image = SOIL_load_image( "resources/images/coins.jpg", &imageWidth, &imageHeight, 0, SOIL_LOAD_RGB );
-    glBindTexture( GL_TEXTURE_2D, specularMapCoin );
-    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGB, imageWidth, imageHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, image );
-    glGenerateMipmap( GL_TEXTURE_2D );
-    SOIL_free_image_data( image );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST );
-    glBindTexture( GL_TEXTURE_2D, 0 );
-    
     
     // Set texture units
     lightingShader.Use( );
@@ -418,17 +436,6 @@ int main( )
         glUniform1f( glGetUniformLocation( lightingShader.Program, "pointLights[3].linear" ), 0.09f );
         glUniform1f( glGetUniformLocation( lightingShader.Program, "pointLights[3].quadratic" ), 0.032f );
         
-//        // SpotLight
-//        glUniform3f( glGetUniformLocation( lightingShader.Program, "spotLight.position" ), camera.GetPosition( ).x, camera.GetPosition( ).y, camera.GetPosition( ).z );
-//        glUniform3f( glGetUniformLocation( lightingShader.Program, "spotLight.direction" ), camera.GetFront( ).x, camera.GetFront( ).y, camera.GetFront( ).z );
-//        glUniform3f( glGetUniformLocation( lightingShader.Program, "spotLight.ambient" ), 0.0f, 0.0f, 0.0f );
-//        glUniform3f( glGetUniformLocation( lightingShader.Program, "spotLight.diffuse" ), 1.0f, 1.0f, 1.0f );
-//        glUniform3f( glGetUniformLocation( lightingShader.Program, "spotLight.specular" ), 1.0f, 1.0f, 1.0f );
-//        glUniform1f( glGetUniformLocation( lightingShader.Program, "spotLight.constant" ), 1.0f );
-//        glUniform1f( glGetUniformLocation( lightingShader.Program, "spotLight.linear" ), 0.09f );
-//        glUniform1f( glGetUniformLocation( lightingShader.Program, "spotLight.quadratic" ), 0.032f );
-//        glUniform1f( glGetUniformLocation( lightingShader.Program, "spotLight.cutOff" ), glm::cos( glm::radians( 12.5f ) ) );
-//        glUniform1f( glGetUniformLocation( lightingShader.Program, "spotLight.outerCutOff" ), glm::cos( glm::radians( 15.0f ) ) );
         
         // Spotlight player
         glUniform3f( glGetUniformLocation( lightingShader.Program, "spotLight.position" ), car.GetPosition( ).x, car.GetPosition( ).y, car.GetPosition( ).z );
@@ -443,23 +450,10 @@ int main( )
         glUniform1f( glGetUniformLocation( lightingShader.Program, "spotLight.outerCutOff" ), glm::cos( glm::radians( 15.0f ) ) );
         
         // Create camera transformations
-        
-        
-        
-         
-
-
         glm::mat4 view;
         view = camera.GetViewMatrix( );
 
-          
-
-        
-        
         glm::mat4 model(1.0f);
-        
-        
-
         
         // Get the uniform locations
         GLint modelLoc = glGetUniformLocation( lightingShader.Program, "model" );
@@ -470,114 +464,38 @@ int main( )
         glUniformMatrix4fv( projLoc, 1, GL_FALSE, glm::value_ptr( projection ) );
         
         // Bind diffuse map
-//        glActiveTexture( GL_TEXTURE0 );
-//        glBindTexture( GL_TEXTURE_2D, diffuseMap );
-//        // Bind specular map
-//        glActiveTexture( GL_TEXTURE1 );
-//        glBindTexture( GL_TEXTURE_2D, specularMap );
-        
-        
-
-
-
-        //para dibujar las monedas
-//        GLuint coinTexture = TextureLoading::LoadTexture("resources/images/pusheen.png");
-//
-//        glActiveTexture( GL_TEXTURE0 );
-//        glBindTexture( GL_TEXTURE_2D, coinTexture );
-//
-        // Draw 10 containers with the same VAO and VBO information; only their world space coordinates differ
-        //glm::mat4 model( 1.0f );
-        
-
-//        glBindVertexArray( boxVAO );
-//        for ( GLuint i = 0; i < cubos.cubePositions.size(); i++ )
-//        {
-//            model = glm::mat4( 1.0f );
-//            model = glm::translate( model, cubos.cubePositions[i] );
-////            model = glm::translate( model, coins.coinsPositions[i]);
-//            GLfloat dist = collision(player.playerPosition, cubos.cubePositions[i]);
-//            if (dist<1.5f){
-//               // cout<<"hubo una collision";
-//                cubos.exploited[i] = true;
-//                cubos.updatePosition();
-//                cubos.exploited[i] = false;
-//            }
-////            GLfloat angle = 20.0f * i;
-//            model = glm::rotate( model, 0.0f, glm::vec3( 1.0f, 0.0f, 0.0f ) );
-//            cubos.movement(deltaTime);
-//            glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
-//
-//            glDrawArrays( GL_TRIANGLES, 0, 36 );
-//        }
-//        glBindVertexArray( 0 );
-        
-
-
-        
-        
-        
-
-
-
-        // Dibujando las monedas
-        // Bind diffuse map
-//        glUniformMatrix4fv( viewLoc, 1, GL_FALSE, glm::value_ptr( view ) );
-//        glUniformMatrix4fv( projLoc, 1, GL_FALSE, glm::value_ptr( projection ) );
-//
-        // Bind diffuse map
-//        glActiveTexture( GL_TEXTURE0 );
-//        glBindTexture( GL_TEXTURE_2D, diffuseMapCoin );
-//        // Bind specular map
-//        glActiveTexture( GL_TEXTURE1 );
-//        glBindTexture( GL_TEXTURE_2D, specularMapCoin );
-//        glBindVertexArray( boxVAO );
-//        for ( GLuint i = 0; i < coins.coinsPositions.size(); i++ )
-//        {
-//            model = glm::mat4( 1.0f );
-//            model = glm::translate( model, coins.coinsPositions[i] );
-//            //            model = glm::translate( model, coins.coinsPositions[i]);
-////            GLfloat dist = collision(coins.coinsPositions[i], cubos.cubePositions[i]);
-////            GLfloat angle = 20.0f * i;
-//            model = glm::rotate( model, 30.0f, glm::vec3( 1.0f, 0.3f, 0.5f ) );
-//            GLfloat dist = collision(coins.coinsPositions[i], player.playerPosition);
-//            if (dist<1.5f){
-//                // cout<<"hubo una collision";
-//                coins.gotcha[i] = true;
-//                coins.updateCoins();
-//                coins.gotcha[i] = false;
-//                score = score + coins.valor;
-//            }
-//
-//            coins.movement();
-//            glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
-//
-//            glDrawArrays( GL_TRIANGLES, 0, 36 );
-//        }
-//        glBindVertexArray( 0 );
-        
-        
-        
-        
-        // Creando el player
-        glUniformMatrix4fv( viewLoc, 1, GL_FALSE, glm::value_ptr( view ) );
-        glUniformMatrix4fv( projLoc, 1, GL_FALSE, glm::value_ptr( projection ) );
-        
-        // Bind diffuse map
         glActiveTexture( GL_TEXTURE0 );
-        glBindTexture( GL_TEXTURE_2D, diffuseMapCoin );
+        glBindTexture( GL_TEXTURE_2D, diffuseMap );
         // Bind specular map
         glActiveTexture( GL_TEXTURE1 );
-        glBindTexture( GL_TEXTURE_2D, specularMapCoin );
+        glBindTexture( GL_TEXTURE_2D, specularMap );
+        
+        
         glBindVertexArray( boxVAO );
-        model = glm::mat4( 1.0f );
-        model = glm::translate( model, player.playerPosition );
-        model = glm::rotate( model, 30.0f, glm::vec3( 1.0f, 0.3f, 0.5f ) );
-        player.jumper(deltaTime);
-        glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
-        glDrawArrays( GL_TRIANGLES, 0, 36 );
+        for ( GLuint i = 0; i < cubos.cubePositions.size(); i++ )
+        {
+            model = glm::mat4( 1.0f );
+            model = glm::translate( model, cubos.cubePositions[i] );
+            //            model = glm::translate( model, coins.coinsPositions[i]);
+            GLfloat dist = collision(car.playerPosition, cubos.cubePositions[i]);
+            if (dist<1.5f){
+                // cout<<"hubo una collision";
+                cubos.exploited[i] = true;
+                cubos.updatePosition();
+                cubos.exploited[i] = false;
+            }
+            //            GLfloat angle = 20.0f * i;
+            model = glm::rotate( model, 0.0f, glm::vec3( 1.0f, 0.0f, 0.0f ) );
+            cubos.movement(deltaTime);
+            glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
+            
+            glDrawArrays( GL_TRIANGLES, 0, 36 );
+        }
         glBindVertexArray( 0 );
         
+        
+        
+
         // Also draw the lamp object, again binding the appropriate shader
         lampShader.Use( );
         // Get location objects for the matrices on the lamp shader (these could be different on a different shader)
@@ -631,18 +549,37 @@ int main( )
         // Aqui creamos el carro con la clase car
         car.movement(modelLoc, viewLoc, projLoc, shader, ourModel, view, projection, model);
         car.jumper(deltaTime);
+        car.edges();
         
-        manzana.movement(modelLoc, viewLoc, projLoc, shader, manzanaModel, view, projection, model, deltaTime);
+//        manzana.movement(modelLoc, viewLoc, projLoc, shader, manzanaModel, view, projection, model, deltaTime);
+//        
+//        fence.movement(modelLoc, viewLoc, projLoc, shader, fenceModel, view, projection, model, deltaTime);
+//        
+//        persona.movement( modelLoc, viewLoc, projLoc, shader, personaModel, view, projection, model, deltaTime );
+//        
+//        tronco.movement(modelLoc, viewLoc, projLoc, shader, troncoModel, view, projection, model, deltaTime);
+//        
+//        wood.movement(modelLoc, viewLoc, projLoc, shader, woodModel, view, projection, model, deltaTime);
         
-        fence.movement(modelLoc, viewLoc, projLoc, shader, fenceModel, view, projection, model, deltaTime);
         
-        persona.movement( modelLoc, viewLoc, projLoc, shader, personaModel, view, projection, model, deltaTime );
-        
-        tronco.movement(modelLoc, viewLoc, projLoc, shader, troncoModel, view, projection, model, deltaTime);
-        
-        wood.movement(modelLoc, viewLoc, projLoc, shader, woodModel, view, projection, model, deltaTime);
-        
-        
+        for (int i = 0; i < woods.size(); i++) {
+            woods[i].movement(modelLoc, viewLoc, projLoc, shader, woodModel ,view, projection, model, deltaTime);
+        }
+        for (int i = 0; i < woods.size(); i++) {
+            fences[i].movement(modelLoc, viewLoc, projLoc, shader, fenceModel ,view, projection, model, deltaTime);
+        }
+        for (int i = 0; i < woods.size(); i++) {
+            personas[i].movement(modelLoc, viewLoc, projLoc, shader, personaModel ,view, projection, model, deltaTime);
+        }
+        for (int i = 0; i < woods.size(); i++) {
+            troncos[i].movement(modelLoc, viewLoc, projLoc, shader, troncoModel ,view, projection, model, deltaTime);
+        }
+        for (int i = 0; i < woods.size(); i++) {
+            manzanas[i].movement(modelLoc, viewLoc, projLoc, shader, manzanaModel ,view, projection, model, deltaTime);
+        }
+
+
+
 
         
         

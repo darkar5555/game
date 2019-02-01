@@ -66,7 +66,7 @@ public:
         
         model=glm::mat4(1.0f);
         model=glm::translate(model,glm::vec3(2.0f,1.75f,3.0f));
-        model=glm::scale(model, glm::vec3(0.01f,0.01f,0.01f));
+        model=glm::scale(model, glm::vec3(0.005f,0.005f,0.005f));
         glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
         ourModel.Draw( shader );
     }
@@ -82,7 +82,7 @@ public:
         
         model=glm::mat4(1.0f);
         model=glm::translate(model,playerPosition);
-        model=glm::scale(model, glm::vec3(0.01f,0.01f,0.01f));
+        model=glm::scale(model, glm::vec3(0.005f,0.005f,0.005f));
         glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
         ourModel.Draw( shader );
     }
@@ -94,7 +94,7 @@ public:
         if ( direction == DER )
         {
             this->playerPosition += this->right * velocity;
-            cout<<"aprete a la derecha";
+//            cout<<"aprete a la derecha";
         }
         
         if ( direction == IZQ )
@@ -141,6 +141,22 @@ public:
                     jump = glm::vec3 (0.0f,0.0f,0.0f);
                 }
             }
+        }
+    }
+    
+    void edges(){
+         if (playerPosition.x > 3.0f) {
+            right = glm::vec3 (0.0, 0.0f, 0.0f);
+            lefth = glm::vec3 (-1.0, 0.0f, 0.0f);
+
+        }
+        if (playerPosition.x < -3.0f) {
+            lefth = glm::vec3 (0.0, 0.0f, 0.0f);
+            right = glm::vec3 (1.0, 0.0f, 0.0f);
+        }
+        if (playerPosition.x > -2.9f && playerPosition.x < 2.9f) {
+            right = glm::vec3 (1.0, 0.0f, 0.0f);
+            lefth = glm::vec3 (-1.0, 0.0f, 0.0f);
         }
     }
     
