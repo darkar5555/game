@@ -83,22 +83,7 @@ public:
             jump = glm::vec3 (0.0f,1.0f,0.0f);
         }
 //        cout<<this->playerPosition.y<< " ";
-        if ( this->playerPosition.y <= 3.0f && jumpPresed == true ){
-            this->playerPosition += this->jump * velocityJump;
-            if (this->playerPosition.y > 2.6f ){
-                jumpPresed = false;
-                cout<<"jump presses igual a falseo"<< endl;
-                cout<<jumpPresed;
-            }
-        }
-        if ( this->playerPosition.y != 0.0f && jumpPresed == false ){
-            this->playerPosition -=  this->jump * velocityJump;
-            if ( this->playerPosition.y <= 0.0f){
-                jumpPresed = true;
-                this->playerPosition.y = 0.0f;
-                jump = glm::vec3 (0.0f,0.0f,0.0f);
-            }
-        }
+        
     
         
 
@@ -106,6 +91,31 @@ public:
         {
             cout<<"me tengo que proteger"<<endl;
             cout<< jumpPresed;
+        }
+    }
+    
+    void jumper( GLfloat deltaTime ){
+        GLfloat velocityJump = this->movementJump * deltaTime;
+        if ( jumpPresed == true ) {
+            if ( this->playerPosition.y <= 3.0f && jumpPresed == true ){
+                this->playerPosition += this->jump * velocityJump;
+                if (this->playerPosition.y > 2.6f ){
+                    jumpPresed = false;
+                    cout<<"jump presses igual a falseo"<< endl;
+                    cout<<jumpPresed;
+                }
+            }
+
+        }
+        if ( jumpPresed == false ) {
+            if ( this->playerPosition.y != 0.0f && jumpPresed == false ){
+                this->playerPosition -=  this->jump * velocityJump;
+                if ( this->playerPosition.y <= 0.0f){
+                    jumpPresed = true;
+                    this->playerPosition.y = 0.0f;
+                    jump = glm::vec3 (0.0f,0.0f,0.0f);
+                }
+            }
         }
     }
     
