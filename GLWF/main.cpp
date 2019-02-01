@@ -27,12 +27,18 @@
 #include "Light.h"
 #include "Coins.h"
 #include "Player.h"
+//#include "Mesh.h"
+#include "Model.h"
+
+
 
 // Window dimensions
 const GLuint WIDTH = 800, HEIGHT = 600;
 int SCREEN_WIDTH, SCREEN_HEIGHT;
 
-
+Mix_Chunk *sound = NULL;
+    Mix_Chunk *sound2=NULL;
+    int channel;
 // Function prototypes
 void KeyCallback( GLFWwindow *window, int key, int scancode, int action, int mode );
 void MouseCallback( GLFWwindow *window, double xPos, double yPos );
@@ -283,13 +289,20 @@ int main( )
     glUniform1i( glGetUniformLocation( lightingShader.Program, "material.diffuse" ), 0 );
     glUniform1i( glGetUniformLocation( lightingShader.Program, "material.specular" ), 1 );
     
+
+
+
+
+
+    Shader shader("resources/shaders/modelLoading.vs","resources/shaders/modelLoading.frag");
+    Model ourModel("resources/model/Small car.obj");
+
     glm::mat4 projection = glm::perspective( camera.GetZoom( ), ( GLfloat )SCREEN_WIDTH / ( GLfloat )SCREEN_HEIGHT, 0.1f, 100.0f );
     
     
 
     //MUisca del juego
-    Mix_Chunk *sound = NULL;
-    int channel;
+    
     int audio_rate = 22050;
     Uint16 audio_format = AUDIO_S16SYS;
     int audio_channels = 2;
@@ -299,10 +312,15 @@ int main( )
                 exit(1);
     }
     sound = Mix_LoadWAV("resources/music/Dystopic-Mayhem.wav");
+    sound2 = Mix_LoadWAV("resources/music/jump.wav");
     if(sound == NULL) {
             printf("Unable to load WAV file: %s\n", Mix_GetError());
     }
     channel = Mix_PlayChannel(-1, sound, -1);
+
+
+
+    
 
 
 
@@ -323,6 +341,10 @@ int main( )
         glClearColor( 0.1f, 0.1f, 0.1f, 1.0f );
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
         
+        //model loading
+      
+
+
         
         // Use cooresponding shader when setting uniforms/drawing objects
         lightingShader.Use( );
@@ -403,8 +425,23 @@ int main( )
         glUniform1f( glGetUniformLocation( lightingShader.Program, "spotLight.outerCutOff" ), glm::cos( glm::radians( 15.0f ) ) );
         
         // Create camera transformations
+        
+        
+        
+         
+
+
         glm::mat4 view;
         view = camera.GetViewMatrix( );
+
+          
+
+        
+        
+        glm::mat4 model(1.0f);
+        
+        
+
         
         // Get the uniform locations
         GLint modelLoc = glGetUniformLocation( lightingShader.Program, "model" );
@@ -422,6 +459,9 @@ int main( )
         glBindTexture( GL_TEXTURE_2D, specularMap );
         
         
+
+
+
         //para dibujar las monedas
 //        GLuint coinTexture = TextureLoading::LoadTexture("resources/images/pusheen.png");
 //
@@ -429,7 +469,9 @@ int main( )
 //        glBindTexture( GL_TEXTURE_2D, coinTexture );
 //
         // Draw 10 containers with the same VAO and VBO information; only their world space coordinates differ
-        glm::mat4 model( 1.0f );
+        //glm::mat4 model( 1.0f );
+        
+
         glBindVertexArray( boxVAO );
         for ( GLuint i = 0; i < cubos.cubePositions.size(); i++ )
         {
@@ -452,7 +494,14 @@ int main( )
         }
         glBindVertexArray( 0 );
         
+
+
         
+        
+        
+
+
+
         // Dibujando las monedas
         // Bind diffuse map
         glUniformMatrix4fv( viewLoc, 1, GL_FALSE, glm::value_ptr( view ) );
@@ -511,7 +560,7 @@ int main( )
         glBindVertexArray( 0 );
 
 
-
+        
         
         
         
@@ -535,6 +584,29 @@ int main( )
         glDrawArrays( GL_TRIANGLES, 0, 36 );
         glBindVertexArray( 0 );
         
+
+
+       
+        // Pass the matrices to the shader
+        shader.Use();
+
+        modelLoc = glGetUniformLocation( shader.Program, "model" );
+        viewLoc = glGetUniformLocation( shader.Program, "view" );
+        projLoc = glGetUniformLocation( shader.Program, "projection" );
+        glUniformMatrix4fv( viewLoc, 1, GL_FALSE, glm::value_ptr( view ) );
+        glUniformMatrix4fv( projLoc, 1, GL_FALSE, glm::value_ptr( projection ) );
+
+    
+        model=glm::mat4(1.0f);
+        model=glm::translate(model,glm::vec3(0.0f,-1.75f,0.0f));
+        model=glm::scale(model, glm::vec3(0.01f,0.01f,0.01f));
+        glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
+        ourModel.Draw( shader );
+       
+
+
+        
+
         
         // We now draw as many light bulbs as we have point lights.
         glBindVertexArray( lightVAO );
@@ -592,6 +664,8 @@ void DoMovement( )
 void MovePlayer(){
     // Player controls
     if ( keys[GLFW_KEY_SPACE] ) {
+
+        channel = Mix_PlayChannel(-1, sound2, 0);
         player.ProcessKeyboard( SALTO, deltaTime );
     }
     if ( keys[GLFW_KEY_H]) {
