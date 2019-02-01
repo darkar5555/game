@@ -66,6 +66,8 @@ GLfloat deltaTime = 0.0f;    // Time between current frame and last frame
 GLfloat lastFrame = 0.0f;      // Time of last frame
 
 
+
+
 // Funcion de collision
 float collision(glm::vec3 a, glm::vec3 b){
     return sqrt(pow(a.x-b.x,2)+pow(a.y-b.y,2)+pow(a.z-b.z,2));
@@ -125,7 +127,7 @@ int main( )
     // Build and compile our shader program
     Shader lightingShader( "resources/shaders/lighting.vs", "resources/shaders/lighting.frag" );
     Shader lampShader( "resources/shaders/lamp.vs", "resources/shaders/lamp.frag" );
-
+    
     
     // Set up vertex data (and buffer(s)) and attribute pointers
     GLfloat vertices[] =
@@ -182,6 +184,8 @@ int main( )
         glm::vec3(  0.0f,  0.0f, -3.0f      )
     };
     
+    
+
     // First, set the container's VAO (and VBO)
     GLuint VBO, boxVAO;
     glGenVertexArrays( 1, &boxVAO );
@@ -505,19 +509,11 @@ int main( )
         glBindVertexArray( boxVAO );
         model = glm::mat4( 1.0f );
         model = glm::translate( model, player.playerPosition );
-        model = glm::rotate( model, 30.0f, glm::vec3( 1.0f, 0.3f, 0.5f ) );
-        player.jumper(deltaTime);
+        model = glm::rotate( model, 30.0f, glm::vec3( 1.0f, 0.3f, 0.5f ) );         player.jumper(deltaTime);
         glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
         glDrawArrays( GL_TRIANGLES, 0, 36 );
         glBindVertexArray( 0 );
-        
 
-
-
-        
-        
-        
-        
         
         // Also draw the lamp object, again binding the appropriate shader
         lampShader.Use( );
