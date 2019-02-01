@@ -30,7 +30,11 @@
 //#include "Mesh.h"
 #include "Model.h"
 #include "Car.h"
-
+#include "Manzana.h"
+#include "Fence.h"
+#include "Persona.h"
+#include "Tronco.h"
+#include "Wood.h"
 
 
 // Window dimensions
@@ -66,7 +70,11 @@ Player player;
 
 // Aqui se esta creando el carro
 Car car;
-
+Manzana manzana;
+Fence fence;
+Persona persona;
+Tronco tronco;
+Wood wood;
 
 // Light attributes
 glm::vec3 lightPos( 1.2f, 1.0f, 2.0f );
@@ -298,10 +306,13 @@ int main( )
     glUniform1i( glGetUniformLocation( lightingShader.Program, "material.specular" ), 1 );
     
 
-
-
     Shader shader("resources/shaders/modelLoading.vs","resources/shaders/modelLoading.frag");
     Model ourModel("resources/model/Small car.obj");
+    Model manzanaModel("resources/model/manzana/apple textured obj.obj");
+    Model fenceModel("resources/model/fence/fence wood.obj");
+    Model personaModel("resources/model/persona/dummy_obj.obj");
+    Model troncoModel("resources/model/tronco1/low_obj_500.obj");
+    Model woodModel("resources/model/tronco2/low_obj_7000.obj");
 
     glm::mat4 projection = glm::perspective( camera.GetZoom( ), ( GLfloat )SCREEN_WIDTH / ( GLfloat )SCREEN_HEIGHT, 0.1f, 100.0f );
     
@@ -420,8 +431,8 @@ int main( )
 //        glUniform1f( glGetUniformLocation( lightingShader.Program, "spotLight.outerCutOff" ), glm::cos( glm::radians( 15.0f ) ) );
         
         // Spotlight player
-        glUniform3f( glGetUniformLocation( lightingShader.Program, "spotLight.position" ), player.GetPosition( ).x, player.GetPosition( ).y, player.GetPosition( ).z );
-        glUniform3f( glGetUniformLocation( lightingShader.Program, "spotLight.direction" ), player.GetFront( ).x, player.GetFront( ).y, player.GetFront( ).z );
+        glUniform3f( glGetUniformLocation( lightingShader.Program, "spotLight.position" ), car.GetPosition( ).x, car.GetPosition( ).y, car.GetPosition( ).z );
+        glUniform3f( glGetUniformLocation( lightingShader.Program, "spotLight.direction" ), car.GetFront( ).x, car.GetFront( ).y, car.GetFront( ).z );
         glUniform3f( glGetUniformLocation( lightingShader.Program, "spotLight.ambient" ), 0.0f, 0.0f, 0.0f );
         glUniform3f( glGetUniformLocation( lightingShader.Program, "spotLight.diffuse" ), 1.0f, 1.0f, 1.0f );
         glUniform3f( glGetUniformLocation( lightingShader.Program, "spotLight.specular" ), 1.0f, 1.0f, 1.0f );
@@ -459,11 +470,11 @@ int main( )
         glUniformMatrix4fv( projLoc, 1, GL_FALSE, glm::value_ptr( projection ) );
         
         // Bind diffuse map
-        glActiveTexture( GL_TEXTURE0 );
-        glBindTexture( GL_TEXTURE_2D, diffuseMap );
-        // Bind specular map
-        glActiveTexture( GL_TEXTURE1 );
-        glBindTexture( GL_TEXTURE_2D, specularMap );
+//        glActiveTexture( GL_TEXTURE0 );
+//        glBindTexture( GL_TEXTURE_2D, diffuseMap );
+//        // Bind specular map
+//        glActiveTexture( GL_TEXTURE1 );
+//        glBindTexture( GL_TEXTURE_2D, specularMap );
         
         
 
@@ -479,27 +490,27 @@ int main( )
         //glm::mat4 model( 1.0f );
         
 
-        glBindVertexArray( boxVAO );
-        for ( GLuint i = 0; i < cubos.cubePositions.size(); i++ )
-        {
-            model = glm::mat4( 1.0f );
-            model = glm::translate( model, cubos.cubePositions[i] );
-//            model = glm::translate( model, coins.coinsPositions[i]);
-            GLfloat dist = collision(player.playerPosition, cubos.cubePositions[i]);
-            if (dist<1.5f){
-               // cout<<"hubo una collision";
-                cubos.exploited[i] = true;
-                cubos.updatePosition();
-                cubos.exploited[i] = false;
-            }
-//            GLfloat angle = 20.0f * i;
-            model = glm::rotate( model, 0.0f, glm::vec3( 1.0f, 0.0f, 0.0f ) );
-            cubos.movement(deltaTime);
-            glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
-            
-            glDrawArrays( GL_TRIANGLES, 0, 36 );
-        }
-        glBindVertexArray( 0 );
+//        glBindVertexArray( boxVAO );
+//        for ( GLuint i = 0; i < cubos.cubePositions.size(); i++ )
+//        {
+//            model = glm::mat4( 1.0f );
+//            model = glm::translate( model, cubos.cubePositions[i] );
+////            model = glm::translate( model, coins.coinsPositions[i]);
+//            GLfloat dist = collision(player.playerPosition, cubos.cubePositions[i]);
+//            if (dist<1.5f){
+//               // cout<<"hubo una collision";
+//                cubos.exploited[i] = true;
+//                cubos.updatePosition();
+//                cubos.exploited[i] = false;
+//            }
+////            GLfloat angle = 20.0f * i;
+//            model = glm::rotate( model, 0.0f, glm::vec3( 1.0f, 0.0f, 0.0f ) );
+//            cubos.movement(deltaTime);
+//            glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
+//
+//            glDrawArrays( GL_TRIANGLES, 0, 36 );
+//        }
+//        glBindVertexArray( 0 );
         
 
 
@@ -511,39 +522,39 @@ int main( )
 
         // Dibujando las monedas
         // Bind diffuse map
-        glUniformMatrix4fv( viewLoc, 1, GL_FALSE, glm::value_ptr( view ) );
-        glUniformMatrix4fv( projLoc, 1, GL_FALSE, glm::value_ptr( projection ) );
-        
+//        glUniformMatrix4fv( viewLoc, 1, GL_FALSE, glm::value_ptr( view ) );
+//        glUniformMatrix4fv( projLoc, 1, GL_FALSE, glm::value_ptr( projection ) );
+//
         // Bind diffuse map
-        glActiveTexture( GL_TEXTURE0 );
-        glBindTexture( GL_TEXTURE_2D, diffuseMapCoin );
-        // Bind specular map
-        glActiveTexture( GL_TEXTURE1 );
-        glBindTexture( GL_TEXTURE_2D, specularMapCoin );
-        glBindVertexArray( boxVAO );
-        for ( GLuint i = 0; i < coins.coinsPositions.size(); i++ )
-        {
-            model = glm::mat4( 1.0f );
-            model = glm::translate( model, coins.coinsPositions[i] );
-            //            model = glm::translate( model, coins.coinsPositions[i]);
-//            GLfloat dist = collision(coins.coinsPositions[i], cubos.cubePositions[i]);
-//            GLfloat angle = 20.0f * i;
-            model = glm::rotate( model, 30.0f, glm::vec3( 1.0f, 0.3f, 0.5f ) );
-            GLfloat dist = collision(coins.coinsPositions[i], player.playerPosition);
-            if (dist<1.5f){
-                // cout<<"hubo una collision";
-                coins.gotcha[i] = true;
-                coins.updateCoins();
-                coins.gotcha[i] = false;
-                score = score + coins.valor;
-            }
-
-            coins.movement();
-            glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
-            
-            glDrawArrays( GL_TRIANGLES, 0, 36 );
-        }
-        glBindVertexArray( 0 );
+//        glActiveTexture( GL_TEXTURE0 );
+//        glBindTexture( GL_TEXTURE_2D, diffuseMapCoin );
+//        // Bind specular map
+//        glActiveTexture( GL_TEXTURE1 );
+//        glBindTexture( GL_TEXTURE_2D, specularMapCoin );
+//        glBindVertexArray( boxVAO );
+//        for ( GLuint i = 0; i < coins.coinsPositions.size(); i++ )
+//        {
+//            model = glm::mat4( 1.0f );
+//            model = glm::translate( model, coins.coinsPositions[i] );
+//            //            model = glm::translate( model, coins.coinsPositions[i]);
+////            GLfloat dist = collision(coins.coinsPositions[i], cubos.cubePositions[i]);
+////            GLfloat angle = 20.0f * i;
+//            model = glm::rotate( model, 30.0f, glm::vec3( 1.0f, 0.3f, 0.5f ) );
+//            GLfloat dist = collision(coins.coinsPositions[i], player.playerPosition);
+//            if (dist<1.5f){
+//                // cout<<"hubo una collision";
+//                coins.gotcha[i] = true;
+//                coins.updateCoins();
+//                coins.gotcha[i] = false;
+//                score = score + coins.valor;
+//            }
+//
+//            coins.movement();
+//            glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
+//
+//            glDrawArrays( GL_TRIANGLES, 0, 36 );
+//        }
+//        glBindVertexArray( 0 );
         
         
         
@@ -586,6 +597,17 @@ int main( )
         glBindVertexArray( 0 );
         
 
+        // We now draw as many light bulbs as we have point lights.
+        glBindVertexArray( lightVAO );
+        for ( GLuint i = 0; i < 4; i++ )
+        {
+            model = glm::mat4( 1.0f );
+            model = glm::translate( model, pointLightPositions[i] );
+            model = glm::scale( model, glm::vec3( 0.2f ) ); // Make it a smaller cube
+            glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
+            glDrawArrays( GL_TRIANGLES, 0, 36 );
+        }
+        glBindVertexArray( 0 );
 
        
         // Pass the matrices to the shader
@@ -605,24 +627,27 @@ int main( )
         ourModel.Draw( shader );
 //        cout<<ourModel.meshes[0].vertices[1].Position.x<<", "<<ourModel.meshes[0].vertices[1].Position.y<<", "<<ourModel.meshes[0].vertices[1].Position.z ;
         
-
-        
+        // Aqui crearemos todos los modelos
         // Aqui creamos el carro con la clase car
         car.movement(modelLoc, viewLoc, projLoc, shader, ourModel, view, projection, model);
         car.jumper(deltaTime);
+        
+        manzana.movement(modelLoc, viewLoc, projLoc, shader, manzanaModel, view, projection, model, deltaTime);
+        
+        fence.movement(modelLoc, viewLoc, projLoc, shader, fenceModel, view, projection, model, deltaTime);
+        
+        persona.movement( modelLoc, viewLoc, projLoc, shader, personaModel, view, projection, model, deltaTime );
+        
+        tronco.movement(modelLoc, viewLoc, projLoc, shader, troncoModel, view, projection, model, deltaTime);
+        
+        wood.movement(modelLoc, viewLoc, projLoc, shader, woodModel, view, projection, model, deltaTime);
+        
+        
 
         
-        // We now draw as many light bulbs as we have point lights.
-        glBindVertexArray( lightVAO );
-        for ( GLuint i = 0; i < 4; i++ )
-        {
-            model = glm::mat4( 1.0f );
-            model = glm::translate( model, pointLightPositions[i] );
-            model = glm::scale( model, glm::vec3( 0.2f ) ); // Make it a smaller cube
-            glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
-            glDrawArrays( GL_TRIANGLES, 0, 36 );
-        }
-        glBindVertexArray( 0 );
+        
+
+        
         
 //        cout<< score<<endl;
         
