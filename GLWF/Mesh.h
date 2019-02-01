@@ -1,3 +1,6 @@
+#ifndef Mesh_h
+#define Mesh_h
+
 #include <string>
 #include <fstream>
 #include <sstream>
@@ -134,3 +137,4 @@ private:
 };
 
 
+#endif 

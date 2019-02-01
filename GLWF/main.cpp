@@ -29,6 +29,7 @@
 #include "Player.h"
 //#include "Mesh.h"
 #include "Model.h"
+#include "Car.h"
 
 
 
@@ -44,6 +45,7 @@ void KeyCallback( GLFWwindow *window, int key, int scancode, int action, int mod
 void MouseCallback( GLFWwindow *window, double xPos, double yPos );
 void DoMovement( );
 void MovePlayer( );
+void MoveCar( );
 
 
 
@@ -62,6 +64,8 @@ bool firstMouse = true;
 // Player
 Player player;
 
+// Aqui se esta creando el carro
+Car car;
 
 
 // Light attributes
@@ -296,8 +300,6 @@ int main( )
 
 
 
-
-
     Shader shader("resources/shaders/modelLoading.vs","resources/shaders/modelLoading.frag");
     Model ourModel("resources/model/Small car.obj");
 
@@ -340,6 +342,7 @@ int main( )
         DoMovement( );
         
         MovePlayer();
+        MoveCar();
         
         // Clear the colorbuffer
         glClearColor( 0.1f, 0.1f, 0.1f, 1.0f );
@@ -558,7 +561,8 @@ int main( )
         glBindVertexArray( boxVAO );
         model = glm::mat4( 1.0f );
         model = glm::translate( model, player.playerPosition );
-        model = glm::rotate( model, 30.0f, glm::vec3( 1.0f, 0.3f, 0.5f ) );         player.jumper(deltaTime);
+        model = glm::rotate( model, 30.0f, glm::vec3( 1.0f, 0.3f, 0.5f ) );
+        player.jumper(deltaTime);
         glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
         glDrawArrays( GL_TRIANGLES, 0, 36 );
         glBindVertexArray( 0 );
@@ -599,10 +603,13 @@ int main( )
         model=glm::scale(model, glm::vec3(0.01f,0.01f,0.01f));
         glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
         ourModel.Draw( shader );
-       
-
+//        cout<<ourModel.meshes[0].vertices[1].Position.x<<", "<<ourModel.meshes[0].vertices[1].Position.y<<", "<<ourModel.meshes[0].vertices[1].Position.z ;
+        
 
         
+        // Aqui creamos el carro con la clase car
+        car.movement(modelLoc, viewLoc, projLoc, shader, ourModel, view, projection, model);
+        car.jumper(deltaTime);
 
         
         // We now draw as many light bulbs as we have point lights.
@@ -617,7 +624,7 @@ int main( )
         }
         glBindVertexArray( 0 );
         
-        cout<< score<<endl;
+//        cout<< score<<endl;
         
         // Swap the screen buffers
         glfwSwapBuffers( window );
@@ -675,6 +682,27 @@ void MovePlayer(){
         player.ProcessKeyboard( PROTECCION, deltaTime );
     }
 }
+
+void MoveCar(){
+    if ( keys[GLFW_KEY_M] ){
+        car.ProcessKeyboard(DER, deltaTime);
+    }
+    if ( keys[GLFW_KEY_B] ) {
+        car.ProcessKeyboard(IZQ, deltaTime);
+    }
+    if ( keys[GLFW_KEY_V] ) {
+        
+        channel = Mix_PlayChannel(-1, sound2, 0);
+        car.ProcessKeyboard( JUM, deltaTime );
+    }
+    if ( keys[GLFW_KEY_C] ) {
+        car.ProcessKeyboard( PROTECT, deltaTime );
+    }
+    
+
+}
+
+
 
 // Is called whenever a key is pressed/released via GLFW
 void KeyCallback( GLFWwindow *window, int key, int scancode, int action, int mode )

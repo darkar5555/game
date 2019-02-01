@@ -1,3 +1,7 @@
+#ifndef Model_h
+#define Model_h
+
+
 #include <string>
 #include <fstream>
 #include <sstream>
@@ -41,7 +45,6 @@ public:
         }
     }
     
-private:
     /*  Model Data  */
     
     
@@ -232,3 +235,5 @@ GLint TextureFromFile( const char *path, string directory )
     
     return textureID;
 }
+
+#endif
