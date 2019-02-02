@@ -31,6 +31,7 @@ public:
     glm::vec3 right;
     glm::vec3 front;
     bool jumpPresed;
+    bool destroyed;
     string path;
     
     Manzana(){
@@ -40,6 +41,7 @@ public:
         movementSpeed = 6.0f;
         jumpPresed = false;
         front = glm::vec3 ( 0.0f, 0.0f, -1.0f );
+        destroyed = false;
     }
     Manzana(glm::vec3 position){
         manzanaPosition = position;
@@ -48,6 +50,7 @@ public:
         movementSpeed = 6.0f;
         jumpPresed = false;
         front = glm::vec3 ( 0.0f, 0.0f, -1.0f );
+        destroyed = false;
     }
     
     void DrawCar(GLint modelLoc, GLint viewLoc, GLint projLoc, Shader shader, Model ourModel, glm::mat4 view, glm::mat4 projection, glm::mat4 model){

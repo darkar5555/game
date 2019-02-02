@@ -33,6 +33,7 @@ public:
     glm::vec3 front;
     string path;
     GLfloat angle;
+    float destroyed;
     
     Knife(){
         knifePosition = glm::vec3 (0.0f, 0.0f, 0.0f);
@@ -41,6 +42,7 @@ public:
         movementSpeed = 6.0f;
         front = glm::vec3 ( 0.0f, 0.0f, -1.0f );
         angle = 0.0;
+        destroyed = false;
     }
     Knife(glm::vec3 position){
         knifePosition = position;
@@ -49,6 +51,7 @@ public:
         movementSpeed = 6.0f;
         front = glm::vec3 ( 0.0f, 0.0f, -1.0f );
         angle = 0.0;
+        destroyed = false;
     }
     
     void DrawCar(GLint modelLoc, GLint viewLoc, GLint projLoc, Shader shader, Model ourModel, glm::mat4 view, glm::mat4 projection, glm::mat4 model){

@@ -108,6 +108,7 @@ glm::vec3 positionRandomUp(){
 
 
 
+
 // Funcion de collision
 float collision(glm::vec3 a, glm::vec3 b){
     return sqrt(pow(a.x-b.x,2)+pow(a.y-b.y,2)+pow(a.z-b.z,2));
@@ -195,11 +196,6 @@ int main( )
         glm::vec3 temp = positionRandom();
         Manzana a(temp);
         manzanas.push_back(a);
-    }
-    for (int i = 0; i<15; i++) {
-        glm::vec3 temp = positionRandom();
-        Rock a(temp);
-        rocks.push_back(a);
     }
     for (int i = 0; i<15; i++) {
         glm::vec3 temp = positionRandom();
@@ -602,24 +598,93 @@ int main( )
         
         
         for (int i = 0; i < woods.size(); i++) {
+            GLfloat dist = collision(car.playerPosition, woods[i].woodPosition);
+            if (dist<4.0f && car.defense == true){
+                // cout<<"hubo una collision";
+                woods[i].destroyed = true;
+                glm::vec3 newPosition = positionRandom();
+                woods[i].woodPosition = newPosition;
+                woods[i].destroyed = false;
+                //                cout<<"Colision con una manzana"<<endl;
+            }
+
             woods[i].movement(modelLoc, viewLoc, projLoc, shader, woodModel ,view, projection, model, deltaTime);
         }
-        for (int i = 0; i < woods.size(); i++) {
+        for (int i = 0; i < fences.size(); i++) {
+            GLfloat dist = collision(car.playerPosition, fences[i].fencePosition);
+            if (dist<1.5f && car.defense == true){
+                // cout<<"hubo una collision";
+                fences[i].destroyed = true;
+                glm::vec3 newPosition = positionRandom();
+                fences[i].fencePosition = newPosition;
+                fences[i].destroyed = false;
+                //                cout<<"Colision con una manzana"<<endl;
+            }
+
             fences[i].movement(modelLoc, viewLoc, projLoc, shader, fenceModel ,view, projection, model, deltaTime);
         }
-        for (int i = 0; i < woods.size(); i++) {
+        for (int i = 0; i < personas.size(); i++) {
+            GLfloat dist = collision(car.playerPosition, personas[i].personaPosition);
+            if (dist<1.5f && car.defense == true){
+                // cout<<"hubo una collision";
+                personas[i].destroyed = true;
+                glm::vec3 newPosition = positionRandom();
+                personas[i].personaPosition = newPosition;
+                personas[i].destroyed = false;
+                //                cout<<"Colision con una manzana"<<endl;
+            }
+
             personas[i].movement(modelLoc, viewLoc, projLoc, shader, personaModel ,view, projection, model, deltaTime);
         }
-        for (int i = 0; i < woods.size(); i++) {
+        for (int i = 0; i < troncos.size(); i++) {
+            GLfloat dist = collision(car.playerPosition, troncos[i].troncoPosition);
+            if (dist<4.0f && car.defense == true){
+                // cout<<"hubo una collision";
+                troncos[i].destroyed = true;
+                glm::vec3 newPosition = positionRandom();
+                troncos[i].troncoPosition = newPosition;
+                troncos[i].destroyed = false;
+                //                cout<<"Colision con una manzana"<<endl;
+            }
+
             troncos[i].movement(modelLoc, viewLoc, projLoc, shader, troncoModel ,view, projection, model, deltaTime);
         }
-        for (int i = 0; i < woods.size(); i++) {
+        for (int i = 0; i < manzanas.size(); i++) {
+            GLfloat dist = collision(car.playerPosition, manzanas[i].manzanaPosition);
+            if (dist<1.5f){
+                // cout<<"hubo una collision";
+                manzanas[i].destroyed = true;
+                glm::vec3 newPosition = positionRandom();
+                manzanas[i].manzanaPosition = newPosition;
+                manzanas[i].destroyed = false;
+//                cout<<"Colision con una manzana"<<endl;
+            }
             manzanas[i].movement(modelLoc, viewLoc, projLoc, shader, manzanaModel ,view, projection, model, deltaTime);
         }
         for (int i = 0; i < rocks.size(); i++) {
+            GLfloat dist = collision(car.playerPosition, rocks[i].rockPosition);
+            if (dist<1.5f && car.defense == true){
+                // cout<<"hubo una collision";
+                rocks[i].destroyed = true;
+                glm::vec3 newPosition = positionRandom();
+                rocks[i].rockPosition = newPosition;
+                rocks[i].destroyed = false;
+                //                cout<<"Colision con una manzana"<<endl;
+            }
+
             rocks[i].movement(modelLoc, viewLoc, projLoc, shader, rockModel ,view, projection, model, deltaTime);
         }
-        for (int i = 0; i < rocks.size(); i++) {
+        for (int i = 0; i < proyectiles.size(); i++) {
+            GLfloat dist = collision(car.playerPosition, proyectiles[i].proyectilPosition);
+            if (dist<1.5f && car.defense == true){
+                // cout<<"hubo una collision";
+                proyectiles[i].destroyed = true;
+                glm::vec3 newPosition = positionRandom();
+                proyectiles[i].proyectilPosition = newPosition;
+                proyectiles[i].destroyed = false;
+                //                cout<<"Colision con una manzana"<<endl;
+            }
+
             proyectiles[i].movement(modelLoc, viewLoc, projLoc, shader, proyectilModel ,view, projection, model, deltaTime);
         }
 
@@ -711,6 +776,9 @@ void MoveCar(){
     }
     if ( keys[GLFW_KEY_C] ) {
         car.ProcessKeyboard( PROTECT, deltaTime );
+    }
+    if ( keys[GLFW_KEY_X] ) {
+        car.ProcessKeyboard(DEPROTECT, deltaTime);
     }
     
 

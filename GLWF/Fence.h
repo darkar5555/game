@@ -33,6 +33,7 @@ public:
     glm::vec3 front;
     bool jumpPresed;
     string path;
+    bool destroyed;
     
     Fence(){
         fencePosition = glm::vec3 (-2.0f, 0.0f, -30.0f);
@@ -41,6 +42,7 @@ public:
         movementSpeed = 6.0f;
         jumpPresed = false;
         front = glm::vec3 ( 0.0f, 0.0f, -1.0f );
+        destroyed = false;
     }
     Fence(glm::vec3 position){
         fencePosition = position;
@@ -49,6 +51,7 @@ public:
         movementSpeed = 6.0f;
         jumpPresed = false;
         front = glm::vec3 ( 0.0f, 0.0f, -1.0f );
+        destroyed = false;
     }
     
     void DrawCar(GLint modelLoc, GLint viewLoc, GLint projLoc, Shader shader, Model ourModel, glm::mat4 view, glm::mat4 projection, glm::mat4 model){

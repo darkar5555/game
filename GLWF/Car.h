@@ -28,7 +28,8 @@ enum Car_Movement
     IZQ,
     JUM,
     DER,
-    PROTECT
+    PROTECT,
+    DEPROTECT
 };
 
 
@@ -101,8 +102,10 @@ public:
     }
 
     void DropShield(GLint modelLoc, GLint viewLoc, GLint projLoc, Shader shader, Model ourModel, glm::mat4 view, glm::mat4 projection, glm::mat4 model, GLfloat deltaTime){
-        glm::vec3 temp = glm::vec3 (playerPosition.x, playerPosition.y-0.7f, playerPosition.z-0.5f);
-        this->shield.movementDefense(temp ,modelLoc, viewLoc, projLoc, shader, ourModel, view, projection, model, deltaTime);
+        if (defense == true) {
+            glm::vec3 temp = glm::vec3 (playerPosition.x, playerPosition.y-0.7f, playerPosition.z-0.5f);
+            this->shield.movementDefense(temp ,modelLoc, viewLoc, projLoc, shader, ourModel, view, projection, model, deltaTime);
+        }
     }
 
     
@@ -132,9 +135,12 @@ public:
         
         if ( direction == PROTECT )
         {
-            cout<< jumpPresed;
-            attack = true;
+//            cout<< jumpPresed;
+//            attack = true;
             defense = true;
+        }
+        if ( direction == DEPROTECT ){
+            defense = false;
         }
     }
     

@@ -32,6 +32,7 @@ public:
     glm::vec3 front;
     bool jumpPresed;
     string path;
+    bool destroyed;
     
     Persona(){
         personaPosition = glm::vec3 (0.0f, 0.0f, -70.0f);
@@ -40,6 +41,7 @@ public:
         movementSpeed = 6.0f;
         jumpPresed = false;
         front = glm::vec3 ( 0.0f, 0.0f, -1.0f );
+        destroyed = false;
     }
     Persona(glm::vec3 position){
         personaPosition = position;
@@ -48,6 +50,7 @@ public:
         movementSpeed = 6.0f;
         jumpPresed = false;
         front = glm::vec3 ( 0.0f, 0.0f, -1.0f );
+        destroyed = false;
 
     }
     

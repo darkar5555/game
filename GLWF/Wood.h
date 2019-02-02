@@ -31,6 +31,7 @@ public:
     glm::vec3 right;
     glm::vec3 front;
     string path;
+    bool destroyed;
     
     Wood(){
         woodPosition = glm::vec3 (-2.0f, 0.0f, -65.0f);
@@ -38,6 +39,7 @@ public:
         right = glm::vec3 ( 1.0f, 0.0f, 0.0f );
         movementSpeed = 6.0f;
         front = glm::vec3 ( 0.0f, 0.0f, -1.0f );
+        destroyed = false;
     }
     Wood(glm::vec3 position){
         woodPosition = position;
@@ -45,6 +47,7 @@ public:
         right = glm::vec3 ( 1.0f, 0.0f, 0.0f );
         movementSpeed = 6.0f;
         front = glm::vec3 ( 0.0f, 0.0f, -1.0f );
+        destroyed = false;
     }
     
     void DrawCar(GLint modelLoc, GLint viewLoc, GLint projLoc, Shader shader, Model ourModel, glm::mat4 view, glm::mat4 projection, glm::mat4 model){
