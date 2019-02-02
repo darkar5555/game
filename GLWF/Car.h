@@ -29,7 +29,8 @@ enum Car_Movement
     JUM,
     DER,
     PROTECT,
-    DEPROTECT
+    DEPROTECT,
+    ATTACK
 };
 
 
@@ -96,9 +97,8 @@ public:
         ourModel.Draw( shader );
     }
     
-    void DropKnife(GLint modelLoc, GLint viewLoc, GLint projLoc, Shader shader, Model ourModel, glm::mat4 view, glm::mat4 projection, glm::mat4 model, GLfloat deltaTime){
-        glm::vec3 temp = playerPosition;
-        this->knife.movementAttac(temp ,modelLoc, viewLoc, projLoc, shader, ourModel, view, projection, model, deltaTime);
+    void DropKnife(glm::vec3 temp, GLint modelLoc, GLint viewLoc, GLint projLoc, Shader shader, Model ourModel, glm::mat4 view, glm::mat4 projection, glm::mat4 model, GLfloat deltaTime){
+        knife.movementAttac(temp, modelLoc, viewLoc, projLoc, shader, ourModel, view, projection, model, deltaTime);
     }
 
     void DropShield(GLint modelLoc, GLint viewLoc, GLint projLoc, Shader shader, Model ourModel, glm::mat4 view, glm::mat4 projection, glm::mat4 model, GLfloat deltaTime){
@@ -141,6 +141,9 @@ public:
         }
         if ( direction == DEPROTECT ){
             defense = false;
+        }
+        if ( direction == ATTACK ) {
+            attack = true;
         }
     }
     

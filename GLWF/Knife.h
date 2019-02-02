@@ -33,7 +33,8 @@ public:
     glm::vec3 front;
     string path;
     GLfloat angle;
-    float destroyed;
+    bool destroyed;
+//    bool dropped;
     
     Knife(){
         knifePosition = glm::vec3 (0.0f, 0.0f, 0.0f);
@@ -43,6 +44,7 @@ public:
         front = glm::vec3 ( 0.0f, 0.0f, -1.0f );
         angle = 0.0;
         destroyed = false;
+//        dropped = false;
     }
     Knife(glm::vec3 position){
         knifePosition = position;
@@ -52,6 +54,7 @@ public:
         front = glm::vec3 ( 0.0f, 0.0f, -1.0f );
         angle = 0.0;
         destroyed = false;
+//        dropped = false;
     }
     
     void DrawCar(GLint modelLoc, GLint viewLoc, GLint projLoc, Shader shader, Model ourModel, glm::mat4 view, glm::mat4 projection, glm::mat4 model){
@@ -71,24 +74,27 @@ public:
     }
     
     void movement(GLint modelLoc, GLint viewLoc, GLint projLoc, Shader shader, Model ourModel, glm::mat4 view, glm::mat4 projection, glm::mat4 model, GLfloat deltaTime){
+//        if ( dropped == true ) {
+            GLfloat velocity = velocidad * deltaTime;
+            shader.Use();
+            modelLoc = glGetUniformLocation( shader.Program, "model" );
+            viewLoc = glGetUniformLocation( shader.Program, "view" );
+            projLoc = glGetUniformLocation( shader.Program, "projection" );
+            glUniformMatrix4fv( viewLoc, 1, GL_FALSE, glm::value_ptr( view ) );
+            glUniformMatrix4fv( projLoc, 1, GL_FALSE, glm::value_ptr( projection ) );
+            
+            
+            model=glm::mat4(1.0f);
+            model=glm::translate(model,knifePosition);
+            model=glm::scale(model, glm::vec3(0.007f,0.007f,0.007f));
+            model=glm::rotate(model,angle, glm::vec3( 0.0f, 0.5f, 0.5f ));
+            glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
+            ourModel.Draw( shader );
+            knifePosition += glm::vec3 ( 0.0f, 0.0f, -1.0f) * velocity;
+            angle = angle+ 1.0f * velocity;
+//        }
         
-        GLfloat velocity = velocidad * deltaTime;
-        shader.Use();
-        modelLoc = glGetUniformLocation( shader.Program, "model" );
-        viewLoc = glGetUniformLocation( shader.Program, "view" );
-        projLoc = glGetUniformLocation( shader.Program, "projection" );
-        glUniformMatrix4fv( viewLoc, 1, GL_FALSE, glm::value_ptr( view ) );
-        glUniformMatrix4fv( projLoc, 1, GL_FALSE, glm::value_ptr( projection ) );
         
-        
-        model=glm::mat4(1.0f);
-        model=glm::translate(model,knifePosition);
-        model=glm::scale(model, glm::vec3(0.007f,0.007f,0.007f));
-        model=glm::rotate(model,angle, glm::vec3( 0.0f, 0.5f, 0.5f ));
-        glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
-        ourModel.Draw( shader );
-        knifePosition += glm::vec3 ( 0.0f, 0.0f, -1.0f) * velocity;
-        angle = angle+ 1.0f * velocity;
     }
     
     void movementAttac(glm::vec3 position,GLint modelLoc, GLint viewLoc, GLint projLoc, Shader shader, Model ourModel, glm::mat4 view, glm::mat4 projection, glm::mat4 model, GLfloat deltaTime){

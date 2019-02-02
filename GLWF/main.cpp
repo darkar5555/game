@@ -89,6 +89,7 @@ vector<Persona> personas;
 vector<Tronco> troncos;
 vector<Rock> rocks;
 vector<Proyectil> proyectiles;
+vector<Knife> knifes;
 
 
 // Light attributes
@@ -206,6 +207,10 @@ int main( )
         glm::vec3 temp = positionRandomUp();
         Proyectil a(temp);
         proyectiles.push_back(a);
+    }
+    for (int i = 0; i<5; i++) {
+        Knife a;
+        knifes.push_back(a);
     }
 
 
@@ -573,12 +578,17 @@ int main( )
         model=glm::scale(model, glm::vec3(0.01f,0.01f,0.01f));
         glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
         ourModel.Draw( shader );
-//        cout<<ourModel.meshes[0].vertices[1].Position.x<<", "<<ourModel.meshes[0].vertices[1].Position.y<<", "<<ourModel.meshes[0].vertices[1].Position.z ;
-        Knife temp;
+
+        
         // Aqui crearemos todos los modelos
         // Aqui creamos el carro con la clase car
         car.movement(modelLoc, viewLoc, projLoc, shader, ourModel, view, projection, model);
         car.jumper(deltaTime);
+        if (car.attack == true){
+            knife.movement( modelLoc, viewLoc, projLoc, shader, knifeModel, view, projection, model, deltaTime);
+
+        }
+        
         if (car.defense == true) {
             car.DropShield(modelLoc, viewLoc, projLoc, shader, shieldModel ,view, projection, model, deltaTime);
 //            temp.movement(modelLoc, viewLoc, projLoc, shader, knifeModel, view, projection, model, deltaTime);
@@ -607,7 +617,17 @@ int main( )
                 woods[i].destroyed = false;
                 //                cout<<"Colision con una manzana"<<endl;
             }
-
+            GLfloat dist2 = collision(knife.knifePosition, woods[i].woodPosition);
+            if ( dist2<4.0f ){
+                // cout<<"hubo una collision";
+                woods[i].destroyed = true;
+                glm::vec3 newPosition = positionRandom();
+                woods[i].woodPosition = newPosition;
+                woods[i].destroyed = false;
+                car.attack = false;
+                knife.knifePosition =glm::vec3 (0.0, -14.f, 0.0f);
+                //                cout<<"Colision con una manzana"<<endl;
+            }
             woods[i].movement(modelLoc, viewLoc, projLoc, shader, woodModel ,view, projection, model, deltaTime);
         }
         for (int i = 0; i < fences.size(); i++) {
@@ -620,6 +640,19 @@ int main( )
                 fences[i].destroyed = false;
                 //                cout<<"Colision con una manzana"<<endl;
             }
+            GLfloat dist2 = collision(knife.knifePosition, fences[i].fencePosition);
+            if ( dist2<1.5f ){
+                // cout<<"hubo una collision";
+                fences[i].destroyed = true;
+                glm::vec3 newPosition = positionRandom();
+                fences[i].fencePosition = newPosition;
+                fences[i].destroyed = false;
+                car.attack = false;
+                knife.knifePosition =glm::vec3 (0.0, -14.f, 0.0f);
+
+                //                cout<<"Colision con una manzana"<<endl;
+            }
+
 
             fences[i].movement(modelLoc, viewLoc, projLoc, shader, fenceModel ,view, projection, model, deltaTime);
         }
@@ -633,6 +666,18 @@ int main( )
                 personas[i].destroyed = false;
                 //                cout<<"Colision con una manzana"<<endl;
             }
+            GLfloat dist2 = collision(knife.knifePosition, personas[i].personaPosition);
+            if ( dist2<1.5f ){
+                // cout<<"hubo una collision";
+                personas[i].destroyed = true;
+                glm::vec3 newPosition = positionRandom();
+                personas[i].personaPosition = newPosition;
+                personas[i].destroyed = false;
+                car.attack = false;
+                knife.knifePosition =glm::vec3 (0.0, -14.f, 0.0f);
+                //                cout<<"Colision con una manzana"<<endl;
+            }
+
 
             personas[i].movement(modelLoc, viewLoc, projLoc, shader, personaModel ,view, projection, model, deltaTime);
         }
@@ -646,6 +691,18 @@ int main( )
                 troncos[i].destroyed = false;
                 //                cout<<"Colision con una manzana"<<endl;
             }
+            GLfloat dist2 = collision(knife.knifePosition, troncos[i].troncoPosition);
+            if ( dist2<4.0f ){
+                // cout<<"hubo una collision";
+                troncos[i].destroyed = true;
+                glm::vec3 newPosition = positionRandom();
+                troncos[i].troncoPosition = newPosition;
+                troncos[i].destroyed = false;
+                car.attack = false;
+                knife.knifePosition =glm::vec3 (0.0, -14.f, 0.0f);
+                //                cout<<"Colision con una manzana"<<endl;
+            }
+
 
             troncos[i].movement(modelLoc, viewLoc, projLoc, shader, troncoModel ,view, projection, model, deltaTime);
         }
@@ -671,6 +728,18 @@ int main( )
                 rocks[i].destroyed = false;
                 //                cout<<"Colision con una manzana"<<endl;
             }
+            GLfloat dist2 = collision(knife.knifePosition, rocks[i].rockPosition);
+            if ( dist2<1.5f ){
+                // cout<<"hubo una collision";
+                rocks[i].destroyed = true;
+                glm::vec3 newPosition = positionRandom();
+                rocks[i].rockPosition = newPosition;
+                rocks[i].destroyed = false;
+                car.attack = false;
+                knife.knifePosition =glm::vec3 (0.0, -14.f, 0.0f);
+                //                cout<<"Colision con una manzana"<<endl;
+            }
+
 
             rocks[i].movement(modelLoc, viewLoc, projLoc, shader, rockModel ,view, projection, model, deltaTime);
         }
@@ -684,6 +753,18 @@ int main( )
                 proyectiles[i].destroyed = false;
                 //                cout<<"Colision con una manzana"<<endl;
             }
+            GLfloat dist2 = collision(knife.knifePosition, proyectiles[i].proyectilPosition);
+            if ( dist2<1.5f ){
+                // cout<<"hubo una collision";
+                proyectiles[i].destroyed = true;
+                glm::vec3 newPosition = positionRandom();
+                proyectiles[i].proyectilPosition = newPosition;
+                proyectiles[i].destroyed = false;
+                car.attack = false;
+                knife.knifePosition =glm::vec3 (0.0, -14.f, 0.0f);
+                //                cout<<"Colision con una manzana"<<endl;
+            }
+
 
             proyectiles[i].movement(modelLoc, viewLoc, projLoc, shader, proyectilModel ,view, projection, model, deltaTime);
         }
@@ -779,6 +860,11 @@ void MoveCar(){
     }
     if ( keys[GLFW_KEY_X] ) {
         car.ProcessKeyboard(DEPROTECT, deltaTime);
+    }
+    if ( keys[GLFW_KEY_Z] ) {
+        car.attack = true;
+//        knife.dropped = true;
+        knife.knifePosition = car.playerPosition;
     }
     
 
