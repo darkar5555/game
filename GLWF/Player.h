@@ -17,6 +17,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include "Knife.h"
 
 using namespace std;
 
@@ -57,6 +58,11 @@ public:
         movementJump = 4.0f;
         jumpPresed = false;
         front = glm::vec3 ( 0.0f, 0.0f, -1.0f );
+    }
+    
+    void DropKnife(GLint modelLoc, GLint viewLoc, GLint projLoc, Shader shader, Model ourModel, glm::mat4 view, glm::mat4 projection, glm::mat4 model, GLfloat deltaTime){
+        Knife knife;
+        knife.movement(modelLoc, viewLoc, projLoc, shader, ourModel, view, projection, model, deltaTime);
     }
     
     void ProcessKeyboard( Player_Movement direction, GLfloat deltaTime )

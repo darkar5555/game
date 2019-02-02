@@ -35,6 +35,10 @@
 #include "Persona.h"
 #include "Tronco.h"
 #include "Wood.h"
+#include "Knife.h"
+#include "Rock.h"
+#include "Proyectil.h"
+#include "Shield.h"
 
 
 // Window dimensions
@@ -75,12 +79,17 @@ Fence fence;
 Persona persona;
 Tronco tronco;
 Wood wood;
+Knife knife;
+Shield shield;
 
 vector<Wood> woods;
 vector<Manzana> manzanas;
 vector<Fence> fences;
 vector<Persona> personas;
 vector<Tronco> troncos;
+vector<Rock> rocks;
+vector<Proyectil> proyectiles;
+
 
 // Light attributes
 glm::vec3 lightPos( 1.2f, 1.0f, 2.0f );
@@ -93,6 +102,10 @@ GLfloat lastFrame = 0.0f;      // Time of last frame
 glm::vec3 positionRandom(){
     return glm::vec3(  rand()%7-3,  0.0f,  -(rand()%300) + 20.0f );
 }
+glm::vec3 positionRandomUp(){
+    return glm::vec3(  rand()%7-3,  2.0f,  -(rand()%300) + 20.0f );
+}
+
 
 
 // Funcion de collision
@@ -183,6 +196,23 @@ int main( )
         Manzana a(temp);
         manzanas.push_back(a);
     }
+    for (int i = 0; i<15; i++) {
+        glm::vec3 temp = positionRandom();
+        Rock a(temp);
+        rocks.push_back(a);
+    }
+    for (int i = 0; i<15; i++) {
+        glm::vec3 temp = positionRandom();
+        Rock a(temp);
+        rocks.push_back(a);
+    }
+    for (int i = 0; i<15; i++) {
+        glm::vec3 temp = positionRandomUp();
+        Proyectil a(temp);
+        proyectiles.push_back(a);
+    }
+
+
 
 
 
@@ -331,6 +361,10 @@ int main( )
     Model personaModel("resources/model/persona/dummy_obj.obj");
     Model troncoModel("resources/model/tronco1/low_obj_500.obj");
     Model woodModel("resources/model/tronco2/low_obj_7000.obj");
+    Model knifeModel("resources/model/knife/Knife_1.obj");
+    Model rockModel("resources/model/cubo_piedra/objAztec.obj");
+    Model proyectilModel("resources/model/proyectil/Mk 82 Snakeye.obj");
+    Model shieldModel("resources/model/escudo/Zelda+Sword.obj");
 
     glm::mat4 projection = glm::perspective( camera.GetZoom( ), ( GLfloat )SCREEN_WIDTH / ( GLfloat )SCREEN_HEIGHT, 0.1f, 100.0f );
     
@@ -544,11 +578,16 @@ int main( )
         glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
         ourModel.Draw( shader );
 //        cout<<ourModel.meshes[0].vertices[1].Position.x<<", "<<ourModel.meshes[0].vertices[1].Position.y<<", "<<ourModel.meshes[0].vertices[1].Position.z ;
-        
+        Knife temp;
         // Aqui crearemos todos los modelos
         // Aqui creamos el carro con la clase car
         car.movement(modelLoc, viewLoc, projLoc, shader, ourModel, view, projection, model);
         car.jumper(deltaTime);
+        if (car.defense == true) {
+            car.DropShield(modelLoc, viewLoc, projLoc, shader, shieldModel ,view, projection, model, deltaTime);
+//            temp.movement(modelLoc, viewLoc, projLoc, shader, knifeModel, view, projection, model, deltaTime);
+        }
+//        car.DropKnife(modelLoc, viewLoc, projLoc, shader, knifeModel, view, projection, model, deltaTime);
         car.edges();
         
 //        manzana.movement(modelLoc, viewLoc, projLoc, shader, manzanaModel, view, projection, model, deltaTime);
@@ -577,6 +616,19 @@ int main( )
         for (int i = 0; i < woods.size(); i++) {
             manzanas[i].movement(modelLoc, viewLoc, projLoc, shader, manzanaModel ,view, projection, model, deltaTime);
         }
+        for (int i = 0; i < rocks.size(); i++) {
+            rocks[i].movement(modelLoc, viewLoc, projLoc, shader, rockModel ,view, projection, model, deltaTime);
+        }
+        for (int i = 0; i < rocks.size(); i++) {
+            proyectiles[i].movement(modelLoc, viewLoc, projLoc, shader, proyectilModel ,view, projection, model, deltaTime);
+        }
+
+        
+        
+
+        
+        
+//        knife.movement(modelLoc, viewLoc, projLoc, shader, knifeModel, view, projection, model, deltaTime);
 
 
 

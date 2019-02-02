@@ -18,6 +18,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include "Model.h"
+#include "Knife.h"
+#include "Shield.h"
 
 using namespace std;
 
@@ -43,6 +45,10 @@ public:
     glm::vec3 front;
     bool jumpPresed;
     string path;
+    bool attack;
+    Knife knife;
+    Shield shield;
+    bool defense;
 
     Car(){
         playerPosition = glm::vec3 (0.0f, 0.0f, 0.0f);
@@ -53,6 +59,8 @@ public:
         movementJump = 4.0f;
         jumpPresed = false;
         front = glm::vec3 ( 0.0f, 0.0f, -1.0f );
+        attack = false;
+//        knife(playerPosition);
     }
     
     void DrawCar(GLint modelLoc, GLint viewLoc, GLint projLoc, Shader shader, Model ourModel, glm::mat4 view, glm::mat4 projection, glm::mat4 model){
@@ -87,6 +95,17 @@ public:
         ourModel.Draw( shader );
     }
     
+    void DropKnife(GLint modelLoc, GLint viewLoc, GLint projLoc, Shader shader, Model ourModel, glm::mat4 view, glm::mat4 projection, glm::mat4 model, GLfloat deltaTime){
+        glm::vec3 temp = playerPosition;
+        this->knife.movementAttac(temp ,modelLoc, viewLoc, projLoc, shader, ourModel, view, projection, model, deltaTime);
+    }
+
+    void DropShield(GLint modelLoc, GLint viewLoc, GLint projLoc, Shader shader, Model ourModel, glm::mat4 view, glm::mat4 projection, glm::mat4 model, GLfloat deltaTime){
+        glm::vec3 temp = glm::vec3 (playerPosition.x, playerPosition.y-0.7f, playerPosition.z-0.5f);
+        this->shield.movementDefense(temp ,modelLoc, viewLoc, projLoc, shader, ourModel, view, projection, model, deltaTime);
+    }
+
+    
     void ProcessKeyboard( Car_Movement direction, GLfloat deltaTime )
     {
         GLfloat velocity = this->movementSpeed * deltaTime;
@@ -105,7 +124,6 @@ public:
         if ( direction == JUM && playerPosition.y == 0.0f )
         {
             //            jumpPresed = true;
-            cout<< "entre al loop"<<endl;
             movementJump = 4.0f;
             jumpPresed = true;
             jump = glm::vec3 (0.0f,1.0f,0.0f);
@@ -114,8 +132,9 @@ public:
         
         if ( direction == PROTECT )
         {
-            cout<<"me tengo que proteger"<<endl;
             cout<< jumpPresed;
+            attack = true;
+            defense = true;
         }
     }
     
