@@ -169,6 +169,7 @@ int main( )
     // Build and compile our shader program
     Shader lightingShader( "resources/shaders/lighting.vs", "resources/shaders/lighting.frag" );
     Shader lampShader( "resources/shaders/lamp.vs", "resources/shaders/lamp.frag" );
+    Shader ourShader( "resources/shaders/core.vs", "resources/shaders/core.frag" );
     
     
     
@@ -234,7 +235,7 @@ int main( )
         -0.5f, -0.5f,  0.5f,    0.0f,  0.0f,  1.0f,     0.0f,  0.0f,
         0.5f, -0.5f,  0.5f,     0.0f,  0.0f,  1.0f,     1.0f,  0.0f,
         0.5f,  0.5f,  0.5f,     0.0f,  0.0f,  1.0f,     1.0f,  1.0f,
-        0.5f,  0.5f,  0.5f,     0.0f,  0.0f,  1.0f,      1.0f,  1.0f,
+        0.5f,  0.5f,  0.5f,     0.0f,  0.0f,  1.0f,     1.0f,  1.0f,
         -0.5f,  0.5f,  0.5f,    0.0f,  0.0f,  1.0f,     0.0f,  1.0f,
         -0.5f, -0.5f,  0.5f,    0.0f,  0.0f,  1.0f,     0.0f,  0.0f,
         
@@ -266,7 +267,55 @@ int main( )
         -0.5f,  0.5f,  0.5f,    0.0f,  1.0f,  0.0f,     0.0f,  0.0f,
         -0.5f,  0.5f, -0.5f,    0.0f,  1.0f,  0.0f,     0.0f,  1.0f
     };
+    
+    
+    GLfloat verticesAmbiente[] =
+    {
+        // Positions            // Normals              // Texture Coords
+        -100.5f, -100.5f, -100.5f,    0.0f,  0.0f, -1.0f,     0.0f,  0.0f,
+        100.5f, -100.5f, -100.5f,     0.0f,  0.0f, -1.0f,     100.0f,  0.0f,
+        100.5f,  100.5f, -100.5f,     0.0f,  0.0f, -1.0f,     100.0f,  100.0f,
+        100.5f,  100.5f, -100.5f,     0.0f,  0.0f, -1.0f,     100.0f,  100.0f,
+        -100.5f,  100.5f, -100.5f,    0.0f,  0.0f, -1.0f,     0.0f,  100.0f,
+        -100.5f, -100.5f, -100.5f,    0.0f,  0.0f, -1.0f,     0.0f,  0.0f,
         
+        -100.5f, -100.5f,  100.5f,    0.0f,  0.0f,  1.0f,     0.0f,  0.0f,
+        100.5f, -100.5f,  100.5f,     0.0f,  0.0f,  1.0f,     100.0f,  0.0f,
+        100.5f,  100.5f,  100.5f,     0.0f,  0.0f,  1.0f,     100.0f,  1.0f,
+        100.5f,  100.5f,  100.5f,     0.0f,  0.0f,  1.0f,     100.0f,  100.0f,
+        -100.5f,  100.5f,  100.5f,    0.0f,  0.0f,  1.0f,     0.0f,  100.0f,
+        -100.5f, -100.5f,  100.5f,    0.0f,  0.0f,  1.0f,     0.0f,  0.0f,
+        
+        -100.5f,  100.5f,  100.5f,    -1.0f,  0.0f,  0.0f,    100.0f,  0.0f,
+        -100.5f,  100.5f, -100.5f,    -1.0f,  0.0f,  0.0f,    100.0f,  100.0f,
+        -100.5f, -100.5f, -100.5f,    -1.0f,  0.0f,  0.0f,    0.0f,  100.0f,
+        -100.5f, -100.5f, -100.5f,    -1.0f,  0.0f,  0.0f,    0.0f,  100.0f,
+        -100.5f, -100.5f,  100.5f,    -1.0f,  0.0f,  0.0f,    0.0f,  0.0f,
+        -100.5f,  100.5f,  100.5f,    -1.0f,  0.0f,  0.0f,    100.0f,  0.0f,
+        
+        100.5f,  100.5f,  100.5f,     1.0f,  0.0f,  0.0f,     100.0f,  0.0f,
+        100.5f,  100.5f, -100.5f,     1.0f,  0.0f,  0.0f,     100.0f,  100.0f,
+        100.5f, -100.5f, -100.5f,     1.0f,  0.0f,  0.0f,     0.0f,  100.0f,
+        100.5f, -100.5f, -100.5f,     1.0f,  0.0f,  0.0f,     0.0f,  100.0f,
+        100.5f, -100.5f,  100.5f,     1.0f,  0.0f,  0.0f,     0.0f,  0.0f,
+        100.5f,  100.5f,  100.5f,     1.0f,  0.0f,  0.0f,     100.0f,  0.0f,
+        
+        -100.5f, -100.5f, -100.5f,    0.0f, -1.0f,  0.0f,     0.0f,  100.0f,
+        100.5f, -100.5f, -100.5f,     0.0f, -1.0f,  0.0f,     100.0f,  100.0f,
+        100.5f, -100.5f,  100.5f,     0.0f, -1.0f,  0.0f,     100.0f,  0.0f,
+        100.5f, -100.5f,  100.5f,     0.0f, -1.0f,  0.0f,     100.0f,  0.0f,
+        -100.5f, -100.5f,  100.5f,    0.0f, -1.0f,  0.0f,     0.0f,  0.0f,
+        -100.5f, -100.5f, -100.5f,    0.0f, -1.0f,  0.0f,     0.0f,  100.0f,
+        
+        -100.5f,  100.5f, -100.5f,    0.0f,  1.0f,  0.0f,     0.0f,  100.0f,
+        100.5f,  100.5f, -100.5f,     0.0f,  1.0f,  0.0f,     100.0f,  100.0f,
+        100.5f,  100.5f,  100.5f,     0.0f,  1.0f,  0.0f,     100.0f,  0.0f,
+        100.5f,  100.5f,  100.5f,     0.0f,  1.0f,  0.0f,     100.0f,  0.0f,
+        -100.5f,  100.5f,  100.5f,    0.0f,  1.0f,  0.0f,     0.0f,  0.0f,
+        -100.5f,  100.5f, -100.5f,    0.0f,  1.0f,  0.0f,     0.0f,  100.0f
+    };
+
+    
     // Positions of the point lights
     glm::vec3 pointLightPositions[] = {
         glm::vec3(  0.7f,  0.2f,  2.0f      ),
@@ -294,6 +343,24 @@ int main( )
     glEnableVertexAttribArray( 2 );
     glBindVertexArray( 0 );
     
+    
+    GLuint VBOspace, spaceVAO;
+    glGenVertexArrays( 1, &spaceVAO );
+    glGenBuffers( 1, &VBOspace );
+    
+    glBindBuffer( GL_ARRAY_BUFFER, VBOspace );
+    glBufferData( GL_ARRAY_BUFFER, sizeof(verticesAmbiente), verticesAmbiente, GL_STATIC_DRAW );
+    
+    glBindVertexArray( spaceVAO );
+    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof( GLfloat ), ( GLvoid * )0 );
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof( GLfloat ), ( GLvoid * )( 3 * sizeof( GLfloat ) ) );
+    glEnableVertexAttribArray( 1 );
+    glVertexAttribPointer( 2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof( GLfloat ), ( GLvoid * )( 6 * sizeof( GLfloat ) ) );
+    glEnableVertexAttribArray( 2 );
+    glBindVertexArray( 0 );
+
+    
     // Then, we set the light's VAO (VBO stays the same. After all, the vertices are the same for the light object (also a 3D cube))
     GLuint lightVAO;
     glGenVertexArrays( 1, &lightVAO );
@@ -306,12 +373,15 @@ int main( )
     glBindVertexArray( 0 );
     
     // Load textures
-    GLuint diffuseMap, specularMap, emissionMap, diffuseMapCoin, specularMapCoin;
+    GLuint diffuseMap, specularMap, emissionMap, diffuseMapCoin, specularMapCoin, diffuseSpace, specularSpace;
     glGenTextures( 1, &diffuseMap );
     glGenTextures( 1, &specularMap );
     glGenTextures( 1, &emissionMap );
     glGenTextures( 1, &diffuseMapCoin);
     glGenTextures( 1, &specularMapCoin);
+    glGenTextures( 1, &diffuseSpace);
+    glGenTextures( 1, &specularSpace);
+
     
     int imageWidth, imageHeight;
     unsigned char *image;
@@ -347,6 +417,30 @@ int main( )
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST );
     glBindTexture( GL_TEXTURE_2D, 0 );
     
+    
+    
+    // ===================
+    // Texture de el spacio
+    // ===================
+    GLuint texture;
+    
+    int width, height;
+
+    glGenTextures( 1, &texture );
+    glBindTexture( GL_TEXTURE_2D, texture );
+    // Set our texture parameters
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+    // Set texture filtering
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+    // Load, create texture and generate mipmaps
+    unsigned char *imageSpace = SOIL_load_image( "resources/images/ambiente.jpg", &width, &height, 0, SOIL_LOAD_RGBA );
+    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageSpace );
+    glGenerateMipmap( GL_TEXTURE_2D );
+    SOIL_free_image_data( imageSpace );
+    glBindTexture( GL_TEXTURE_2D, 0 );
+
     
     
     // Set texture units
@@ -444,6 +538,15 @@ int main( )
         glUniform1f( glGetUniformLocation( lightingShader.Program, "pointLights[0].linear" ), 0.09f );
         glUniform1f( glGetUniformLocation( lightingShader.Program, "pointLights[0].quadratic" ), 0.032f );
         
+        //point ligth ambiente
+        glUniform3f( glGetUniformLocation( lightingShader.Program, "pointLights[0].position" ), 0.0f, 0.0f, -80.0f );
+        glUniform3f( glGetUniformLocation( lightingShader.Program, "pointLights[0].ambient" ), 25.05f, 25.05f, 25.05f );
+        glUniform3f( glGetUniformLocation( lightingShader.Program, "pointLights[0].diffuse" ), 0.8f, 0.8f, 0.8f );
+        glUniform3f( glGetUniformLocation( lightingShader.Program, "pointLights[0].specular" ), 1.0f, 1.0f, 1.0f );
+        glUniform1f( glGetUniformLocation( lightingShader.Program, "pointLights[0].constant" ), 1.0f );
+        glUniform1f( glGetUniformLocation( lightingShader.Program, "pointLights[0].linear" ), 0.09f );
+        glUniform1f( glGetUniformLocation( lightingShader.Program, "pointLights[0].quadratic" ), 0.032f );
+        
         // Point light 2
         glUniform3f( glGetUniformLocation( lightingShader.Program, "pointLights[1].position" ), pointLightPositions[1].x, pointLightPositions[1].y, pointLightPositions[1].z );
         glUniform3f( glGetUniformLocation( lightingShader.Program, "pointLights[1].ambient" ), 0.05f, 0.05f, 0.05f );
@@ -526,6 +629,27 @@ int main( )
             
             glDrawArrays( GL_TRIANGLES, 0, 36 );
         }
+        glBindVertexArray( 0 );
+        
+        
+        
+        
+        // dibujando es espacio
+        // Bind diffuse map
+        glUniformMatrix4fv( viewLoc, 1, GL_FALSE, glm::value_ptr( view ) );
+        glUniformMatrix4fv( projLoc, 1, GL_FALSE, glm::value_ptr( projection ) );
+        
+        // Bind diffuse map
+        glActiveTexture( GL_TEXTURE0 );
+        glBindTexture( GL_TEXTURE_2D, texture );
+        // Bind specular map
+        glBindVertexArray( boxVAO );
+        model = glm::mat4( 1.0f );
+        model = glm::translate( model, glm::vec3 (0.0f, 0.0f, 0.0f) );
+        model = glm::rotate( model, 0.0f, glm::vec3( 1.0f, 0.0f, 0.0f ) );
+        model = glm::scale( model, glm::vec3( 100.0f ) ); // Make it a smaller cube
+        glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
+        glDrawArrays( GL_TRIANGLES, 0, 36 );
         glBindVertexArray( 0 );
         
         
