@@ -169,7 +169,6 @@ int main( )
     // Build and compile our shader program
     Shader lightingShader( "resources/shaders/lighting.vs", "resources/shaders/lighting.frag" );
     Shader lampShader( "resources/shaders/lamp.vs", "resources/shaders/lamp.frag" );
-    Shader ourShader( "resources/shaders/core.vs", "resources/shaders/core.frag" );
     
     
     
@@ -269,53 +268,6 @@ int main( )
     };
     
     
-    GLfloat verticesAmbiente[] =
-    {
-        // Positions            // Normals              // Texture Coords
-        -100.5f, -100.5f, -100.5f,    0.0f,  0.0f, -1.0f,     0.0f,  0.0f,
-        100.5f, -100.5f, -100.5f,     0.0f,  0.0f, -1.0f,     100.0f,  0.0f,
-        100.5f,  100.5f, -100.5f,     0.0f,  0.0f, -1.0f,     100.0f,  100.0f,
-        100.5f,  100.5f, -100.5f,     0.0f,  0.0f, -1.0f,     100.0f,  100.0f,
-        -100.5f,  100.5f, -100.5f,    0.0f,  0.0f, -1.0f,     0.0f,  100.0f,
-        -100.5f, -100.5f, -100.5f,    0.0f,  0.0f, -1.0f,     0.0f,  0.0f,
-        
-        -100.5f, -100.5f,  100.5f,    0.0f,  0.0f,  1.0f,     0.0f,  0.0f,
-        100.5f, -100.5f,  100.5f,     0.0f,  0.0f,  1.0f,     100.0f,  0.0f,
-        100.5f,  100.5f,  100.5f,     0.0f,  0.0f,  1.0f,     100.0f,  1.0f,
-        100.5f,  100.5f,  100.5f,     0.0f,  0.0f,  1.0f,     100.0f,  100.0f,
-        -100.5f,  100.5f,  100.5f,    0.0f,  0.0f,  1.0f,     0.0f,  100.0f,
-        -100.5f, -100.5f,  100.5f,    0.0f,  0.0f,  1.0f,     0.0f,  0.0f,
-        
-        -100.5f,  100.5f,  100.5f,    -1.0f,  0.0f,  0.0f,    100.0f,  0.0f,
-        -100.5f,  100.5f, -100.5f,    -1.0f,  0.0f,  0.0f,    100.0f,  100.0f,
-        -100.5f, -100.5f, -100.5f,    -1.0f,  0.0f,  0.0f,    0.0f,  100.0f,
-        -100.5f, -100.5f, -100.5f,    -1.0f,  0.0f,  0.0f,    0.0f,  100.0f,
-        -100.5f, -100.5f,  100.5f,    -1.0f,  0.0f,  0.0f,    0.0f,  0.0f,
-        -100.5f,  100.5f,  100.5f,    -1.0f,  0.0f,  0.0f,    100.0f,  0.0f,
-        
-        100.5f,  100.5f,  100.5f,     1.0f,  0.0f,  0.0f,     100.0f,  0.0f,
-        100.5f,  100.5f, -100.5f,     1.0f,  0.0f,  0.0f,     100.0f,  100.0f,
-        100.5f, -100.5f, -100.5f,     1.0f,  0.0f,  0.0f,     0.0f,  100.0f,
-        100.5f, -100.5f, -100.5f,     1.0f,  0.0f,  0.0f,     0.0f,  100.0f,
-        100.5f, -100.5f,  100.5f,     1.0f,  0.0f,  0.0f,     0.0f,  0.0f,
-        100.5f,  100.5f,  100.5f,     1.0f,  0.0f,  0.0f,     100.0f,  0.0f,
-        
-        -100.5f, -100.5f, -100.5f,    0.0f, -1.0f,  0.0f,     0.0f,  100.0f,
-        100.5f, -100.5f, -100.5f,     0.0f, -1.0f,  0.0f,     100.0f,  100.0f,
-        100.5f, -100.5f,  100.5f,     0.0f, -1.0f,  0.0f,     100.0f,  0.0f,
-        100.5f, -100.5f,  100.5f,     0.0f, -1.0f,  0.0f,     100.0f,  0.0f,
-        -100.5f, -100.5f,  100.5f,    0.0f, -1.0f,  0.0f,     0.0f,  0.0f,
-        -100.5f, -100.5f, -100.5f,    0.0f, -1.0f,  0.0f,     0.0f,  100.0f,
-        
-        -100.5f,  100.5f, -100.5f,    0.0f,  1.0f,  0.0f,     0.0f,  100.0f,
-        100.5f,  100.5f, -100.5f,     0.0f,  1.0f,  0.0f,     100.0f,  100.0f,
-        100.5f,  100.5f,  100.5f,     0.0f,  1.0f,  0.0f,     100.0f,  0.0f,
-        100.5f,  100.5f,  100.5f,     0.0f,  1.0f,  0.0f,     100.0f,  0.0f,
-        -100.5f,  100.5f,  100.5f,    0.0f,  1.0f,  0.0f,     0.0f,  0.0f,
-        -100.5f,  100.5f, -100.5f,    0.0f,  1.0f,  0.0f,     0.0f,  100.0f
-    };
-
-    
     // Positions of the point lights
     glm::vec3 pointLightPositions[] = {
         glm::vec3(  0.7f,  0.2f,  2.0f      ),
@@ -344,21 +296,7 @@ int main( )
     glBindVertexArray( 0 );
     
     
-    GLuint VBOspace, spaceVAO;
-    glGenVertexArrays( 1, &spaceVAO );
-    glGenBuffers( 1, &VBOspace );
-    
-    glBindBuffer( GL_ARRAY_BUFFER, VBOspace );
-    glBufferData( GL_ARRAY_BUFFER, sizeof(verticesAmbiente), verticesAmbiente, GL_STATIC_DRAW );
-    
-    glBindVertexArray( spaceVAO );
-    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof( GLfloat ), ( GLvoid * )0 );
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof( GLfloat ), ( GLvoid * )( 3 * sizeof( GLfloat ) ) );
-    glEnableVertexAttribArray( 1 );
-    glVertexAttribPointer( 2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof( GLfloat ), ( GLvoid * )( 6 * sizeof( GLfloat ) ) );
-    glEnableVertexAttribArray( 2 );
-    glBindVertexArray( 0 );
+
 
     
     // Then, we set the light's VAO (VBO stays the same. After all, the vertices are the same for the light object (also a 3D cube))
