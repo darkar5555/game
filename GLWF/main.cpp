@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cmath>
 #include "SDL/SDL_mixer.h"
+#include <unistd.h>
 // GLEW
 #define GLEW_STATIC
 #include <GL/glew.h>
@@ -69,6 +70,7 @@ GLfloat lastY = HEIGHT / 2.0;
 bool keys[1024];
 bool firstMouse = true;
 
+bool pausegame = false;
 // Player
 Player player;
 
@@ -106,7 +108,6 @@ glm::vec3 positionRandom(){
 glm::vec3 positionRandomUp(){
     return glm::vec3(  rand()%7-3,  2.0f,  -(rand()%300) + 20.0f );
 }
-
 
 
 
@@ -216,7 +217,17 @@ int main( )
 
 
 
-
+    GLfloat finishvertices[]=
+            {
+                //posicion                                  //color                                 //texcoords                         //normal
+                -0.5f, 0.5f, 0.f ,          0.f, 0.f, 1.f,                 0.f, 1.f,                //
+                -0.5f, -0.5f, 0.f ,         0.f, 0.f, 1.f,             0.f, 0.f,               //
+                0.5f, -0.5f, 0.f   ,        0.f, 0.f, 1.f,                1.f, 0.f,                //
+            
+                //glm::vec3(-0.5f, 0.5f, 0.f),                glm::vec3(1.f, 0.f, 0.f),               glm::vec2(0.f, 1.f),
+                //glm::vec3(0.5f, -0.5f, 0.f),                glm::vec3(0.f, 0.f, 1.f),               glm::vec2(1.f, 0.f),
+                0.5f, 0.5f, 0.f,             0.f, 0.f, 1.f,                  1.f, 1.f               // 0.f, 0.f, 1.f
+            };
 
 
     
@@ -391,6 +402,8 @@ int main( )
     Box cubos;
     Coin coins;
     GLuint coinTexture = TextureLoading::LoadTexture("resources/images/moneda.jpg");
+
+    
 //    GLuint probando = Box::LoadBox();
 
     
@@ -406,7 +419,7 @@ int main( )
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST );
     
     // Specular map
-    image = SOIL_load_image( "resources/images/container2_specular.png", &imageWidth, &imageHeight, 0, SOIL_LOAD_RGB );
+    image = SOIL_load_image( "resources/images/container_specular.png", &imageWidth, &imageHeight, 0, SOIL_LOAD_RGB );
     glBindTexture( GL_TEXTURE_2D, specularMap );
     glTexImage2D( GL_TEXTURE_2D, 0, GL_RGB, imageWidth, imageHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, image );
     glGenerateMipmap( GL_TEXTURE_2D );
@@ -441,7 +454,27 @@ int main( )
     SOIL_free_image_data( imageSpace );
     glBindTexture( GL_TEXTURE_2D, 0 );
 
-    
+    //
+    GLuint texturegame;
+
+    int width2,height2;
+
+    glGenTextures( 1, &texturegame );
+    glBindTexture( GL_TEXTURE_2D, texturegame );
+    // Set our texture parameters
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+    // Set texture filtering
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+    // Load, create texture and generate mipmaps
+    unsigned char *imageGame = SOIL_load_image( "resources/images/image.jpg", &width2, &height2, 0, SOIL_LOAD_RGBA );
+    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, width2, height2, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageGame);
+    glGenerateMipmap( GL_TEXTURE_2D );
+    SOIL_free_image_data( imageGame );
+    glBindTexture( GL_TEXTURE_2D, 0 );
+
+
     
     // Set texture units
     lightingShader.Use( );
@@ -651,8 +684,41 @@ int main( )
         glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
         glDrawArrays( GL_TRIANGLES, 0, 36 );
         glBindVertexArray( 0 );
+
+
+    //cargando game over
         
         
+        // Bind diffuse map
+        if ( keys[GLFW_KEY_F1] )
+        {
+            glUniformMatrix4fv( viewLoc, 1, GL_FALSE, glm::value_ptr( view ) );
+            glUniformMatrix4fv( projLoc, 1, GL_FALSE, glm::value_ptr( projection ) );
+            glActiveTexture( GL_TEXTURE0 );
+            glBindTexture( GL_TEXTURE_2D, texturegame );
+            // Bind specular map
+            glBindVertexArray( boxVAO );
+            model = glm::mat4( 1.0f );
+            model = glm::translate( model, glm::vec3 (0.0f, 2.0f, 0.0f) );
+            model = glm::rotate( model, 0.0f, glm::vec3( 0.5f, 4.0f, .0f ) );
+            model = glm::scale( model, glm::vec3( 5.0f,2.f,2.f )); // Make it a smaller cube
+            glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
+            glDrawArrays( GL_TRIANGLES, 0, 8 );
+            glBindVertexArray( 0 );
+            pausegame = true;
+            
+            
+            
+        }
+        
+        if(pausegame == true)
+        {
+            float timegame= glfwGetTime();
+            glfwSetTime(timegame);
+        }
+
+
+
         
 
         // Also draw the lamp object, again binding the appropriate shader
