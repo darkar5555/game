@@ -454,7 +454,7 @@ int main( )
     SOIL_free_image_data( imageSpace );
     glBindTexture( GL_TEXTURE_2D, 0 );
 
-    //
+    //game over
     GLuint texturegame;
 
     int width2,height2;
@@ -472,6 +472,26 @@ int main( )
     glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, width2, height2, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageGame);
     glGenerateMipmap( GL_TEXTURE_2D );
     SOIL_free_image_data( imageGame );
+    glBindTexture( GL_TEXTURE_2D, 0 );
+    
+    //menu opciones
+    GLuint textureop;
+
+    int width3,height3;
+
+    glGenTextures( 1, &textureop );
+    glBindTexture( GL_TEXTURE_2D, textureop );
+    // Set our texture parameters
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+    // Set texture filtering
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+    // Load, create texture and generate mipmaps
+    unsigned char *imageOp = SOIL_load_image( "resources/images/image2.jpg", &width3, &height3, 0, SOIL_LOAD_RGBA );
+    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, width3, height3, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageOp);
+    glGenerateMipmap( GL_TEXTURE_2D );
+    SOIL_free_image_data( imageOp );
     glBindTexture( GL_TEXTURE_2D, 0 );
 
 
@@ -686,6 +706,24 @@ int main( )
         glBindVertexArray( 0 );
 
 
+        //cargando menu opciones
+
+        glUniformMatrix4fv( viewLoc, 1, GL_FALSE, glm::value_ptr( view ) );
+        glUniformMatrix4fv( projLoc, 1, GL_FALSE, glm::value_ptr( projection ) );
+        glActiveTexture( GL_TEXTURE0 );
+        glBindTexture( GL_TEXTURE_2D, textureop );
+        // Bind specular map
+        glBindVertexArray( boxVAO );
+        model = glm::mat4( 1.0f );
+        model = glm::translate( model, glm::vec3 (0.0f, 2.0f, 0.0f) );
+        model = glm::rotate( model, 0.0f, glm::vec3( 0.5f, 4.0f, .0f ) );
+        model = glm::scale( model, glm::vec3( 7.0f,4.f,2.f )); // Make it a smaller cube
+        glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
+        glDrawArrays( GL_TRIANGLES, 0, 8 );
+        glBindVertexArray( 0 );
+
+
+
     //cargando game over
         
         
@@ -717,7 +755,7 @@ int main( )
             glfwSetTime(timegame);
         }
 
-
+        
 
         
 
