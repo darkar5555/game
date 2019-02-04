@@ -51,6 +51,7 @@ public:
     Knife knife;
     Shield shield;
     bool defense;
+    GLint lifes;
 
     Car(){
         playerPosition = glm::vec3 (0.0f, 0.0f, 0.0f);
@@ -62,6 +63,7 @@ public:
         jumpPresed = false;
         front = glm::vec3 ( 0.0f, 0.0f, -1.0f );
         attack = false;
+        lifes = 3;
 //        knife(playerPosition);
     }
     

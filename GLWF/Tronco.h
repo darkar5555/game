@@ -26,30 +26,19 @@ class Tronco {
 public:
     glm::vec3 troncoPosition;
     GLfloat movementSpeed;
-    glm::vec3 lefth;
-    glm::vec3 up;
-    glm::vec3 right;
     glm::vec3 front;
-    bool jumpPresed;
-    string path;
     bool destroyed;
     
     Tronco(){
         troncoPosition = glm::vec3 (1.0f, 0.0f, -40.0f);
-        lefth = glm::vec3 (-1.0f, 0.0f, 0.0f);
-        right = glm::vec3 ( 1.0f, 0.0f, 0.0f );
         movementSpeed = 6.0f;
-        jumpPresed = false;
-        front = glm::vec3 ( 0.0f, 0.0f, -1.0f );
+        front = glm::vec3 ( 0.0f, 0.0f, 1.0f );
         destroyed = false;
     }
     Tronco(glm::vec3 position){
         troncoPosition = position;
-        lefth = glm::vec3 (-1.0f, 0.0f, 0.0f);
-        right = glm::vec3 ( 1.0f, 0.0f, 0.0f );
         movementSpeed = 6.0f;
-        jumpPresed = false;
-        front = glm::vec3 ( 0.0f, 0.0f, -1.0f );
+        front = glm::vec3 ( 0.0f, 0.0f, 1.0f );
         destroyed = false;
 
     }
@@ -86,9 +75,15 @@ public:
         model=glm::scale(model, glm::vec3(0.5f,0.5f,0.5f));
         glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
         ourModel.Draw( shader );
-        troncoPosition += glm::vec3 ( 0.0f, 0.0f, 1.0f) * velocity;
+        troncoPosition += front * velocity;
     }
     
+    void noMove(){
+        front = glm::vec3 (0.0f, 0.0f, 0.0f);
+    }
+    void dePause(){
+        front = glm::vec3 (0.0f, 0.0f, 1.0f);
+    }
     
     glm::vec3 GetPosition( )
     {

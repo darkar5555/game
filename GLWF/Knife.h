@@ -27,19 +27,13 @@ class Knife {
 public:
     glm::vec3 knifePosition;
     GLfloat movementSpeed;
-    glm::vec3 lefth;
-    glm::vec3 up;
-    glm::vec3 right;
     glm::vec3 front;
-    string path;
     GLfloat angle;
     bool destroyed;
 //    bool dropped;
     
     Knife(){
         knifePosition = glm::vec3 (0.0f, 0.0f, 0.0f);
-        lefth = glm::vec3 (-1.0f, 0.0f, 0.0f);
-        right = glm::vec3 ( 1.0f, 0.0f, 0.0f );
         movementSpeed = 6.0f;
         front = glm::vec3 ( 0.0f, 0.0f, -1.0f );
         angle = 0.0;
@@ -48,8 +42,6 @@ public:
     }
     Knife(glm::vec3 position){
         knifePosition = position;
-        lefth = glm::vec3 (-1.0f, 0.0f, 0.0f);
-        right = glm::vec3 ( 1.0f, 0.0f, 0.0f );
         movementSpeed = 6.0f;
         front = glm::vec3 ( 0.0f, 0.0f, -1.0f );
         angle = 0.0;
@@ -90,7 +82,7 @@ public:
             model=glm::rotate(model,angle, glm::vec3( 0.0f, 0.5f, 0.5f ));
             glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
             ourModel.Draw( shader );
-            knifePosition += glm::vec3 ( 0.0f, 0.0f, -1.0f) * velocity;
+            knifePosition += front * velocity;
             angle = angle+ 1.0f * velocity;
 //        }
         
@@ -114,10 +106,16 @@ public:
         model=glm::rotate(model,angle, glm::vec3( 0.0f, 0.5f, 0.5f ));
         glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
         ourModel.Draw( shader );
-        position += glm::vec3 ( 0.0f, 0.0f, -1.0f) * velocity;
+        position += front * velocity;
         angle = angle+ 1.0f * velocity;
     }
 
+    void noMove(){
+        front = glm::vec3 (0.0f, 0.0f, 0.0f);
+    }
+    void dePause(){
+        front = glm::vec3 (0.0f, 0.0f, -1.0f);
+    }
     
     
     glm::vec3 GetPosition( )
