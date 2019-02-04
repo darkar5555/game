@@ -26,26 +26,20 @@ class Shield {
 public:
     glm::vec3 shieldPosition;
     GLfloat movementSpeed;
-    glm::vec3 lefth;
-    glm::vec3 up;
-    glm::vec3 right;
+   
     glm::vec3 front;
     string path;
     GLfloat angle;
     Shield(){
         shieldPosition = glm::vec3 (-2.0f, 0.0f, -65.0f);
-        lefth = glm::vec3 (-1.0f, 0.0f, 0.0f);
-        right = glm::vec3 ( 1.0f, 0.0f, 0.0f );
         movementSpeed = 6.0f;
-        front = glm::vec3 ( 0.0f, 0.0f, -1.0f );
+        front = glm::vec3 ( 0.0f, 0.0f, 1.0f );
         angle = 0.0f;
     }
     Shield(glm::vec3 position){
         shieldPosition = position;
-        lefth = glm::vec3 (-1.0f, 0.0f, 0.0f);
-        right = glm::vec3 ( 1.0f, 0.0f, 0.0f );
         movementSpeed = 6.0f;
-        front = glm::vec3 ( 0.0f, 0.0f, -1.0f );
+        front = glm::vec3 ( 0.0f, 0.0f, 1.0f );
         angle = 0.0f;
     }
     
@@ -81,7 +75,7 @@ public:
         model=glm::scale(model, glm::vec3(1.f,1.f,1.f));
         glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
         ourModel.Draw( shader );
-        shieldPosition += glm::vec3 ( 0.0f, 0.0f, 1.0f) * velocity;
+        shieldPosition += front * velocity;
     }
     
     void movementDefense(glm::vec3 position,GLint modelLoc, GLint viewLoc, GLint projLoc, Shader shader, Model ourModel, glm::mat4 view, glm::mat4 projection, glm::mat4 model, GLfloat deltaTime){
@@ -101,7 +95,7 @@ public:
 //        model=glm::rotate(model,angle, glm::vec3( 0.0f, 0.5f, 0.5f ));
         glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
         ourModel.Draw( shader );
-        position += glm::vec3 ( 0.0f, 0.0f, -1.0f) * velocity;
+        position += front * velocity;
 //        angle = angle+ 1.0f * velocity;
     }
 

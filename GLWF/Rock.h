@@ -26,26 +26,18 @@ class Rock {
 public:
     glm::vec3 rockPosition;
     GLfloat movementSpeed;
-    glm::vec3 lefth;
-    glm::vec3 up;
-    glm::vec3 right;
     glm::vec3 front;
-    string path;
     bool destroyed;
     Rock(){
         rockPosition = glm::vec3 (-2.0f, 0.0f, -65.0f);
-        lefth = glm::vec3 (-1.0f, 0.0f, 0.0f);
-        right = glm::vec3 ( 1.0f, 0.0f, 0.0f );
         movementSpeed = 6.0f;
-        front = glm::vec3 ( 0.0f, 0.0f, -1.0f );
+        front = glm::vec3 ( 0.0f, 0.0f, 1.0f );
         destroyed = false;
     }
     Rock(glm::vec3 position){
         rockPosition = position;
-        lefth = glm::vec3 (-1.0f, 0.0f, 0.0f);
-        right = glm::vec3 ( 1.0f, 0.0f, 0.0f );
         movementSpeed = 6.0f;
-        front = glm::vec3 ( 0.0f, 0.0f, -1.0f );
+        front = glm::vec3 ( 0.0f, 0.0f, 1.0f );
         destroyed = false;
     }
     
@@ -81,9 +73,15 @@ public:
         model=glm::scale(model, glm::vec3(0.05f,0.05f,0.05f));
         glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
         ourModel.Draw( shader );
-        rockPosition += glm::vec3 ( 0.0f, 0.0f, 1.0f) * velocity;
+        rockPosition += front * velocity;
     }
     
+    void noMove(){
+        front = glm::vec3 (0.0f, 0.0f, 0.0f);
+    }
+    void dePause(){
+        front = glm::vec3 (0.0f, 0.0f, 1.0f);
+    }
     
     glm::vec3 GetPosition( )
     {

@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cmath>
 #include "SDL/SDL_mixer.h"
+#include <unistd.h>
 // GLEW
 #define GLEW_STATIC
 #include <GL/glew.h>
@@ -55,7 +56,8 @@ void DoMovement( );
 void MovePlayer( );
 void MoveCar( );
 
-
+bool pausando = false;
+bool despausando = true;
 
 
 // Player lifes and score
@@ -69,6 +71,7 @@ GLfloat lastY = HEIGHT / 2.0;
 bool keys[1024];
 bool firstMouse = true;
 
+bool pausegame = false;
 // Player
 Player player;
 
@@ -101,13 +104,11 @@ GLfloat lastFrame = 0.0f;      // Time of last frame
 
 
 glm::vec3 positionRandom(){
-    return glm::vec3(  rand()%7-3,  0.0f,  -(rand()%300) + 20.0f );
+    return glm::vec3(  rand()%7-3,  0.0f,  -(rand()%300) - 100.0f );
 }
 glm::vec3 positionRandomUp(){
-    return glm::vec3(  rand()%7-3,  2.0f,  -(rand()%300) + 20.0f );
+    return glm::vec3(  rand()%7-3,  2.0f,  -(rand()%300) -100.0f );
 }
-
-
 
 
 // Funcion de collision
@@ -215,7 +216,17 @@ int main( )
 
 
 
-
+    GLfloat finishvertices[]=
+            {
+                //posicion                                  //color                                 //texcoords                         //normal
+                -0.5f, 0.5f, 0.f ,          0.f, 0.f, 1.f,                 0.f, 1.f,                //
+                -0.5f, -0.5f, 0.f ,         0.f, 0.f, 1.f,             0.f, 0.f,               //
+                0.5f, -0.5f, 0.f   ,        0.f, 0.f, 1.f,                1.f, 0.f,                //
+            
+                //glm::vec3(-0.5f, 0.5f, 0.f),                glm::vec3(1.f, 0.f, 0.f),               glm::vec2(0.f, 1.f),
+                //glm::vec3(0.5f, -0.5f, 0.f),                glm::vec3(0.f, 0.f, 1.f),               glm::vec2(1.f, 0.f),
+                0.5f, 0.5f, 0.f,             0.f, 0.f, 1.f,                  1.f, 1.f               // 0.f, 0.f, 1.f
+            };
 
 
     
@@ -329,6 +340,8 @@ int main( )
     Box cubos;
     Coin coins;
     GLuint coinTexture = TextureLoading::LoadTexture("resources/images/moneda.jpg");
+
+    
 //    GLuint probando = Box::LoadBox();
 
     
@@ -344,7 +357,7 @@ int main( )
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST );
     
     // Specular map
-    image = SOIL_load_image( "resources/images/container2_specular.png", &imageWidth, &imageHeight, 0, SOIL_LOAD_RGB );
+    image = SOIL_load_image( "resources/images/container_specular.png", &imageWidth, &imageHeight, 0, SOIL_LOAD_RGB );
     glBindTexture( GL_TEXTURE_2D, specularMap );
     glTexImage2D( GL_TEXTURE_2D, 0, GL_RGB, imageWidth, imageHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, image );
     glGenerateMipmap( GL_TEXTURE_2D );
@@ -379,7 +392,27 @@ int main( )
     SOIL_free_image_data( imageSpace );
     glBindTexture( GL_TEXTURE_2D, 0 );
 
-    
+    //
+    GLuint texturegame;
+
+    int width2,height2;
+
+    glGenTextures( 1, &texturegame );
+    glBindTexture( GL_TEXTURE_2D, texturegame );
+    // Set our texture parameters
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+    // Set texture filtering
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+    // Load, create texture and generate mipmaps
+    unsigned char *imageGame = SOIL_load_image( "resources/images/image.jpg", &width2, &height2, 0, SOIL_LOAD_RGBA );
+    glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, width2, height2, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageGame);
+    glGenerateMipmap( GL_TEXTURE_2D );
+    SOIL_free_image_data( imageGame );
+    glBindTexture( GL_TEXTURE_2D, 0 );
+
+
     
     // Set texture units
     lightingShader.Use( );
@@ -562,7 +595,13 @@ int main( )
             }
             //            GLfloat angle = 20.0f * i;
             model = glm::rotate( model, 0.0f, glm::vec3( 1.0f, 0.0f, 0.0f ) );
-            cubos.movement(deltaTime);
+            if (pausando == true) {
+                cubos.noMove();
+            }
+            if (pausando == false) {
+                cubos.dePause();
+            }
+            cubos.movement(deltaTime*0.07);
             glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
             
             glDrawArrays( GL_TRIANGLES, 0, 36 );
@@ -589,8 +628,42 @@ int main( )
         glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
         glDrawArrays( GL_TRIANGLES, 0, 36 );
         glBindVertexArray( 0 );
+
+
+    //cargando game over
         
         
+        // Bind diffuse map
+        if ( car.lifes <= 0 )
+        {
+            glUniformMatrix4fv( viewLoc, 1, GL_FALSE, glm::value_ptr( view ) );
+            glUniformMatrix4fv( projLoc, 1, GL_FALSE, glm::value_ptr( projection ) );
+            glActiveTexture( GL_TEXTURE0 );
+            glBindTexture( GL_TEXTURE_2D, texturegame );
+            // Bind specular map
+            glBindVertexArray( boxVAO );
+            model = glm::mat4( 1.0f );
+            model = glm::translate( model, glm::vec3 (0.0f, 2.0f, 0.0f) );
+            model = glm::rotate( model, 0.0f, glm::vec3( 0.5f, 4.0f, .0f ) );
+            model = glm::scale( model, glm::vec3( 5.0f,2.f,2.f )); // Make it a smaller cube
+            glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
+            glDrawArrays( GL_TRIANGLES, 0, 8 );
+            glBindVertexArray( 0 );
+            pausegame = true;
+            if (car.lifes < -30) {
+                glfwSetWindowShouldClose(window, GL_TRUE);
+
+            }
+        }
+        
+        if(pausegame == true)
+        {
+            float timegame= glfwGetTime();
+            glfwSetTime(timegame);
+        }
+
+
+
         
 
         // Also draw the lamp object, again binding the appropriate shader
@@ -653,55 +726,63 @@ int main( )
         
         if (car.defense == true) {
             car.DropShield(modelLoc, viewLoc, projLoc, shader, shieldModel ,view, projection, model, deltaTime);
-//            temp.movement(modelLoc, viewLoc, projLoc, shader, knifeModel, view, projection, model, deltaTime);
         }
-//        car.DropKnife(modelLoc, viewLoc, projLoc, shader, knifeModel, view, projection, model, deltaTime);
         car.edges();
-        
-//        manzana.movement(modelLoc, viewLoc, projLoc, shader, manzanaModel, view, projection, model, deltaTime);
-//        
-//        fence.movement(modelLoc, viewLoc, projLoc, shader, fenceModel, view, projection, model, deltaTime);
-//        
-//        persona.movement( modelLoc, viewLoc, projLoc, shader, personaModel, view, projection, model, deltaTime );
-//        
-//        tronco.movement(modelLoc, viewLoc, projLoc, shader, troncoModel, view, projection, model, deltaTime);
-//        
-//        wood.movement(modelLoc, viewLoc, projLoc, shader, woodModel, view, projection, model, deltaTime);
+
         
         
         for (int i = 0; i < woods.size(); i++) {
             GLfloat dist = collision(car.playerPosition, woods[i].woodPosition);
-            if (dist<4.0f && car.defense == true){
-                // cout<<"hubo una collision";
+            if (dist<2.0f && car.defense == true){
                 woods[i].destroyed = true;
                 glm::vec3 newPosition = positionRandom();
                 woods[i].woodPosition = newPosition;
                 woods[i].destroyed = false;
-                //                cout<<"Colision con una manzana"<<endl;
+                car.defense = false;
+            }
+            if (dist<2.0f && car.defense == false) {
+                car.lifes = car.lifes -1;
+                woods[i].destroyed = true;
+                glm::vec3 newPosition = positionRandom();
+                woods[i].woodPosition = newPosition;
+                woods[i].destroyed = false;
+                cout<< car.lifes <<endl;
             }
             GLfloat dist2 = collision(knife.knifePosition, woods[i].woodPosition);
-            if ( dist2<4.0f ){
-                // cout<<"hubo una collision";
+            if ( dist2<2.0f ){
                 woods[i].destroyed = true;
                 glm::vec3 newPosition = positionRandom();
                 woods[i].woodPosition = newPosition;
                 woods[i].destroyed = false;
                 car.attack = false;
                 knife.knifePosition =glm::vec3 (0.0, -14.f, 0.0f);
-                //                cout<<"Colision con una manzana"<<endl;
+            }
+            if (pausando == true) {
+                woods[i].noMove();
+            }
+            if (pausando == false) {
+                woods[i].dePause();
             }
             woods[i].movement(modelLoc, viewLoc, projLoc, shader, woodModel ,view, projection, model, deltaTime);
         }
         for (int i = 0; i < fences.size(); i++) {
             GLfloat dist = collision(car.playerPosition, fences[i].fencePosition);
             if (dist<1.5f && car.defense == true){
-                // cout<<"hubo una collision";
                 fences[i].destroyed = true;
                 glm::vec3 newPosition = positionRandom();
                 fences[i].fencePosition = newPosition;
                 fences[i].destroyed = false;
-                //                cout<<"Colision con una manzana"<<endl;
+                car.defense = false;
             }
+            if (dist<1.5f && car.defense == false) {
+                car.lifes = car.lifes -1;
+                fences[i].destroyed = true;
+                glm::vec3 newPosition = positionRandom();
+                fences[i].fencePosition = newPosition;
+                fences[i].destroyed = false;
+                cout<< car.lifes <<endl;
+            }
+
             GLfloat dist2 = collision(knife.knifePosition, fences[i].fencePosition);
             if ( dist2<1.5f ){
                 // cout<<"hubo una collision";
@@ -714,8 +795,12 @@ int main( )
 
                 //                cout<<"Colision con una manzana"<<endl;
             }
-
-
+            if (pausando == true) {
+                fences[i].noMove();
+            }
+            if (pausando == false) {
+                fences[i].dePause();
+            }
             fences[i].movement(modelLoc, viewLoc, projLoc, shader, fenceModel ,view, projection, model, deltaTime);
         }
         for (int i = 0; i < personas.size(); i++) {
@@ -726,7 +811,16 @@ int main( )
                 glm::vec3 newPosition = positionRandom();
                 personas[i].personaPosition = newPosition;
                 personas[i].destroyed = false;
+                car.defense = false;
                 //                cout<<"Colision con una manzana"<<endl;
+            }
+            if (dist<1.5f && car.defense == false) {
+                car.lifes = car.lifes -1;
+                personas[i].destroyed = true;
+                glm::vec3 newPosition = positionRandom();
+                personas[i].personaPosition = newPosition;
+                personas[i].destroyed = false;
+                cout<< car.lifes <<endl;
             }
             GLfloat dist2 = collision(knife.knifePosition, personas[i].personaPosition);
             if ( dist2<1.5f ){
@@ -739,22 +833,35 @@ int main( )
                 knife.knifePosition =glm::vec3 (0.0, -14.f, 0.0f);
                 //                cout<<"Colision con una manzana"<<endl;
             }
-
-
+            if (pausando == true) {
+                personas[i].noMove();
+            }
+            if (pausando == false) {
+                personas[i].dePause();
+            }
             personas[i].movement(modelLoc, viewLoc, projLoc, shader, personaModel ,view, projection, model, deltaTime);
         }
         for (int i = 0; i < troncos.size(); i++) {
             GLfloat dist = collision(car.playerPosition, troncos[i].troncoPosition);
-            if (dist<4.0f && car.defense == true){
+            if (dist<1.5f && car.defense == true){
                 // cout<<"hubo una collision";
                 troncos[i].destroyed = true;
                 glm::vec3 newPosition = positionRandom();
                 troncos[i].troncoPosition = newPosition;
                 troncos[i].destroyed = false;
+                car.defense = false;
                 //                cout<<"Colision con una manzana"<<endl;
             }
+            if (dist<1.5f && car.defense == false) {
+                car.lifes = car.lifes -1;
+                troncos[i].destroyed = true;
+                glm::vec3 newPosition = positionRandom();
+                troncos[i].troncoPosition = newPosition;
+                troncos[i].destroyed = false;
+                cout<< car.lifes <<endl;
+            }
             GLfloat dist2 = collision(knife.knifePosition, troncos[i].troncoPosition);
-            if ( dist2<4.0f ){
+            if ( dist2<1.5f ){
                 // cout<<"hubo una collision";
                 troncos[i].destroyed = true;
                 glm::vec3 newPosition = positionRandom();
@@ -764,8 +871,12 @@ int main( )
                 knife.knifePosition =glm::vec3 (0.0, -14.f, 0.0f);
                 //                cout<<"Colision con una manzana"<<endl;
             }
-
-
+            if (pausando == true) {
+                troncos[i].noMove();
+            }
+            if (pausando == false) {
+                troncos[i].dePause();
+            }
             troncos[i].movement(modelLoc, viewLoc, projLoc, shader, troncoModel ,view, projection, model, deltaTime);
         }
         for (int i = 0; i < manzanas.size(); i++) {
@@ -778,6 +889,12 @@ int main( )
                 manzanas[i].destroyed = false;
 //                cout<<"Colision con una manzana"<<endl;
             }
+            if (pausando == true) {
+                manzanas[i].noMove();
+            }
+            if (pausando == false) {
+                manzanas[i].dePause();
+            }
             manzanas[i].movement(modelLoc, viewLoc, projLoc, shader, manzanaModel ,view, projection, model, deltaTime);
         }
         for (int i = 0; i < rocks.size(); i++) {
@@ -788,7 +905,17 @@ int main( )
                 glm::vec3 newPosition = positionRandom();
                 rocks[i].rockPosition = newPosition;
                 rocks[i].destroyed = false;
+                car.defense = false;
                 //                cout<<"Colision con una manzana"<<endl;
+            }
+            if (dist<1.5f && car.defense == false) {
+                car.lifes = car.lifes -1;
+                rocks[i].destroyed = true;
+                glm::vec3 newPosition = positionRandom();
+                rocks[i].rockPosition = newPosition;
+                rocks[i].destroyed = false;
+
+                cout<< car.lifes <<endl;
             }
             GLfloat dist2 = collision(knife.knifePosition, rocks[i].rockPosition);
             if ( dist2<1.5f ){
@@ -802,7 +929,12 @@ int main( )
                 //                cout<<"Colision con una manzana"<<endl;
             }
 
-
+            if (pausando == true) {
+                rocks[i].noMove();
+            }
+            if (pausando == false) {
+                rocks[i].dePause();
+            }
             rocks[i].movement(modelLoc, viewLoc, projLoc, shader, rockModel ,view, projection, model, deltaTime);
         }
         for (int i = 0; i < proyectiles.size(); i++) {
@@ -813,7 +945,16 @@ int main( )
                 glm::vec3 newPosition = positionRandom();
                 proyectiles[i].proyectilPosition = newPosition;
                 proyectiles[i].destroyed = false;
+                car.defense = false;
                 //                cout<<"Colision con una manzana"<<endl;
+            }
+            if (dist<1.5f && car.defense == false) {
+                car.lifes = car.lifes -1;
+                proyectiles[i].destroyed = true;
+                glm::vec3 newPosition = positionRandom();
+                proyectiles[i].proyectilPosition = newPosition;
+                proyectiles[i].destroyed = false;
+                cout<< car.lifes <<endl;
             }
             GLfloat dist2 = collision(knife.knifePosition, proyectiles[i].proyectilPosition);
             if ( dist2<1.5f ){
@@ -826,8 +967,12 @@ int main( )
                 knife.knifePosition =glm::vec3 (0.0, -14.f, 0.0f);
                 //                cout<<"Colision con una manzana"<<endl;
             }
-
-
+            if (pausando == true) {
+                proyectiles[i].noMove();
+            }
+            if (pausando == false) {
+                proyectiles[i].dePause();
+            }
             proyectiles[i].movement(modelLoc, viewLoc, projLoc, shader, proyectilModel ,view, projection, model, deltaTime);
         }
 
@@ -866,22 +1011,22 @@ int main( )
 void DoMovement( )
 {
     // Camera controls
-    if ( keys[GLFW_KEY_W] || keys[GLFW_KEY_UP] )
+    if ( keys[GLFW_KEY_W] )
     {
         camera.ProcessKeyboard( FORWARD, deltaTime );
     }
     
-    if ( keys[GLFW_KEY_S] || keys[GLFW_KEY_DOWN] )
+    if ( keys[GLFW_KEY_S] )
     {
         camera.ProcessKeyboard( BACKWARD, deltaTime );
     }
     
-    if ( keys[GLFW_KEY_A] || keys[GLFW_KEY_LEFT] )
+    if ( keys[GLFW_KEY_A] )
     {
         camera.ProcessKeyboard( LEFT, deltaTime );
     }
     
-    if ( keys[GLFW_KEY_D] || keys[GLFW_KEY_RIGHT] )
+    if ( keys[GLFW_KEY_D] )
     {
         camera.ProcessKeyboard( RIGHT, deltaTime );
     }
@@ -889,11 +1034,7 @@ void DoMovement( )
 
 void MovePlayer(){
     // Player controls
-    if ( keys[GLFW_KEY_SPACE] ) {
-
-        channel = Mix_PlayChannel(-1, sound2, 0);
-        player.ProcessKeyboard( SALTO, deltaTime );
-    }
+    
     if ( keys[GLFW_KEY_H]) {
         player.ProcessKeyboard( IZQUIERDA, deltaTime );
     }
@@ -906,27 +1047,33 @@ void MovePlayer(){
 }
 
 void MoveCar(){
-    if ( keys[GLFW_KEY_M] ){
+    if ( keys[GLFW_KEY_RIGHT] ){
         car.ProcessKeyboard(DER, deltaTime);
     }
-    if ( keys[GLFW_KEY_B] ) {
+    if ( keys[GLFW_KEY_LEFT] ) {
         car.ProcessKeyboard(IZQ, deltaTime);
     }
-    if ( keys[GLFW_KEY_V] ) {
+    if ( keys[GLFW_KEY_UP] ) {
         
         channel = Mix_PlayChannel(-1, sound2, 0);
         car.ProcessKeyboard( JUM, deltaTime );
     }
-    if ( keys[GLFW_KEY_C] ) {
+    if ( keys[GLFW_KEY_DOWN] ) {
         car.ProcessKeyboard( PROTECT, deltaTime );
     }
-    if ( keys[GLFW_KEY_X] ) {
+    if ( keys[GLFW_KEY_V] ) {
         car.ProcessKeyboard(DEPROTECT, deltaTime);
     }
-    if ( keys[GLFW_KEY_Z] ) {
+    if ( keys[GLFW_KEY_SPACE] ) {
         car.attack = true;
-//        knife.dropped = true;
+        //        knife.dropped = true;
         knife.knifePosition = car.playerPosition;
+    }
+    if ( keys[GLFW_KEY_V] ) {
+        pausando = true;
+    }
+    if ( keys[GLFW_KEY_B] ) {
+        pausando = false;
     }
     
 

@@ -26,30 +26,19 @@ class Persona {
 public:
     glm::vec3 personaPosition;
     GLfloat movementSpeed;
-    glm::vec3 lefth;
-    glm::vec3 up;
-    glm::vec3 right;
     glm::vec3 front;
-    bool jumpPresed;
-    string path;
     bool destroyed;
     
     Persona(){
         personaPosition = glm::vec3 (0.0f, 0.0f, -70.0f);
-        lefth = glm::vec3 (-1.0f, 0.0f, 0.0f);
-        right = glm::vec3 ( 1.0f, 0.0f, 0.0f );
         movementSpeed = 6.0f;
-        jumpPresed = false;
-        front = glm::vec3 ( 0.0f, 0.0f, -1.0f );
+        front = glm::vec3 ( 0.0f, 0.0f, 1.0f );
         destroyed = false;
     }
     Persona(glm::vec3 position){
         personaPosition = position;
-        lefth = glm::vec3 (-1.0f, 0.0f, 0.0f);
-        right = glm::vec3 ( 1.0f, 0.0f, 0.0f );
         movementSpeed = 6.0f;
-        jumpPresed = false;
-        front = glm::vec3 ( 0.0f, 0.0f, -1.0f );
+        front = glm::vec3 ( 0.0f, 0.0f, 1.0f );
         destroyed = false;
 
     }
@@ -86,9 +75,15 @@ public:
         model=glm::scale(model, glm::vec3(0.007f,0.007f,0.007f));
         glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
         ourModel.Draw( shader );
-        personaPosition += glm::vec3 ( 0.0f, 0.0f, 1.0f) * velocity;
+        personaPosition += front * velocity;
     }
     
+    void noMove(){
+        front = glm::vec3 (0.0f, 0.0f, 0.0f);
+    }
+    void dePause(){
+        front = glm::vec3 (0.0f, 0.0f, 1.0f);
+    }
     
     glm::vec3 GetPosition( )
     {

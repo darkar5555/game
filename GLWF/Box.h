@@ -41,6 +41,7 @@ class Box {
 public:
     vector<glm::vec3> cubePositions;
     vector<bool> exploited;
+    glm::vec3 front;
     
     Box(){
         cubePositions.push_back(glm::vec3(  rand()%4-2,  0.0f,  -300.0f ));
@@ -55,12 +56,13 @@ public:
         exploited.push_back(false);
         exploited.push_back(false);
         exploited.push_back(false);
+        front = glm::vec3 (0.0f, 0.0f, 1.0f);
     }
     
     void movement(GLfloat deltaTime){
         GLfloat velocity = velocidad * deltaTime;
         for (int i = 0; i < cubePositions.size(); i++) {
-            cubePositions[i].z +=  0.1f * velocity;
+            cubePositions[i] +=  front * velocity;
             if (cubePositions[i].z >= 10) {
                 cubePositions[i].x = rand()%10-1;
                 cubePositions[i].z = -rand()%10;
@@ -77,6 +79,13 @@ public:
                 
         }
     }
+    void noMove(){
+        front = glm::vec3 (0.0f, 0.0f, 0.0f);
+    }
+    void dePause(){
+        front = glm::vec3 (0.0f, 0.0f, 1.0f);
+    }
+
     
     static GLuint LoadBox(){
         GLuint cubeVAO, cubeVBO;
