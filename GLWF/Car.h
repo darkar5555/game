@@ -64,6 +64,7 @@ public:
         front = glm::vec3 ( 0.0f, 0.0f, -1.0f );
         attack = false;
         lifes = 3;
+        defense = false;
 //        knife(playerPosition);
     }
     
@@ -105,7 +106,7 @@ public:
 
     void DropShield(GLint modelLoc, GLint viewLoc, GLint projLoc, Shader shader, Model ourModel, glm::mat4 view, glm::mat4 projection, glm::mat4 model, GLfloat deltaTime){
         if (defense == true) {
-            glm::vec3 temp = glm::vec3 (playerPosition.x, playerPosition.y-0.7f, playerPosition.z-0.5f);
+            glm::vec3 temp = glm::vec3 (playerPosition.x, playerPosition.y-0.7f, playerPosition.z-2.0f);
             this->shield.movementDefense(temp ,modelLoc, viewLoc, projLoc, shader, ourModel, view, projection, model, deltaTime);
         }
     }
@@ -156,8 +157,6 @@ public:
                 this->playerPosition += this->jump * velocityJump;
                 if (this->playerPosition.y > 2.6f ){
                     jumpPresed = false;
-                    cout<<"jump presses igual a falseo"<< endl;
-                    cout<<jumpPresed;
                 }
             }
             
