@@ -656,28 +656,8 @@ int main( )
         glDrawArrays( GL_TRIANGLES, 0, 36 );
         glBindVertexArray( 0 );
 
-
-        //cargando menu opciones
-
-        /*glUniformMatrix4fv( viewLoc, 1, GL_FALSE, glm::value_ptr( view ) );
-        glUniformMatrix4fv( projLoc, 1, GL_FALSE, glm::value_ptr( projection ) );
-        glActiveTexture( GL_TEXTURE0 );
-        glBindTexture( GL_TEXTURE_2D, textureop );
-        // Bind specular map
-        glBindVertexArray( boxVAO );
-        model = glm::mat4( 1.0f );
-        model = glm::translate( model, glm::vec3 (0.0f, 2.0f, 0.0f) );
-        model = glm::rotate( model, 0.0f, glm::vec3( 0.5f, 4.0f, .0f ) );
-        model = glm::scale( model, glm::vec3( 7.0f,4.f,2.f )); // Make it a smaller cube
-        glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
-        glDrawArrays( GL_TRIANGLES, 0, 8 );
-        glBindVertexArray( 0 );*/
-
-
-
-    //cargando game over
         
-        
+        //game over
         // Bind diffuse map
         if ( car.lifes <= 0 )
         {
@@ -703,12 +683,33 @@ int main( )
         
         if(pausegame == true)
         {
+            
             float timegame= glfwGetTime();
+
+            
             glfwSetTime(timegame);
+            
+        
         }
 
+        //opciones
+        if(pausando == true)
+        {
+            glUniformMatrix4fv( viewLoc, 1, GL_FALSE, glm::value_ptr( view ) );
+        glUniformMatrix4fv( projLoc, 1, GL_FALSE, glm::value_ptr( projection ) );
+        glActiveTexture( GL_TEXTURE0 );
+        glBindTexture( GL_TEXTURE_2D, textureop );
+        // Bind specular map
+        glBindVertexArray( boxVAO );
+        model = glm::mat4( 1.0f );
+        model = glm::translate( model, glm::vec3 (0.0f, 2.0f, 1.5f) );
+        model = glm::rotate( model, 0.0f, glm::vec3( 0.5f, 4.0f, .0f ) );
+        model = glm::scale( model, glm::vec3( 7.0f,4.f,2.f )); // Make it a smaller cube
+        glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
+        glDrawArrays( GL_TRIANGLES, 0, 8 );
+        glBindVertexArray( 0 );
+        }
         
-
         
 
         // Also draw the lamp object, again binding the appropriate shader
@@ -1107,9 +1108,9 @@ void MoveCar(){
     if ( keys[GLFW_KEY_DOWN] ) {
         car.ProcessKeyboard( PROTECT, deltaTime );
     }
-    if ( keys[GLFW_KEY_V] ) {
+    /*if ( keys[GLFW_KEY_V] ) {
         car.ProcessKeyboard(DEPROTECT, deltaTime);
-    }
+    }*/
     if ( keys[GLFW_KEY_SPACE] ) {
         car.attack = true;
         //        knife.dropped = true;
