@@ -107,8 +107,6 @@ public:
                 this->playerPosition += this->jump * velocityJump;
                 if (this->playerPosition.y > 2.6f ){
                     jumpPresed = false;
-                    cout<<"jump presses igual a falseo"<< endl;
-                    cout<<jumpPresed;
                 }
             }
 

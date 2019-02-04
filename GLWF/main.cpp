@@ -766,8 +766,13 @@ int main( )
         car.movement(modelLoc, viewLoc, projLoc, shader, ourModel, view, projection, model);
         car.jumper(deltaTime);
         if (car.attack == true){
+            if (pausando == true) {
+                knife.noMove();
+            }
+            if (pausando == false) {
+                knife.dePause();
+            }
             knife.movement( modelLoc, viewLoc, projLoc, shader, knifeModel, view, projection, model, deltaTime);
-
         }
         
         if (car.defense == true) {
@@ -779,7 +784,7 @@ int main( )
         
         for (int i = 0; i < woods.size(); i++) {
             GLfloat dist = collision(car.playerPosition, woods[i].woodPosition);
-            if (dist<2.0f && car.defense == true){
+            if (dist<2.5f && car.defense == true){
                 woods[i].destroyed = true;
                 glm::vec3 newPosition = positionRandom();
                 woods[i].woodPosition = newPosition;
@@ -792,7 +797,7 @@ int main( )
                 glm::vec3 newPosition = positionRandom();
                 woods[i].woodPosition = newPosition;
                 woods[i].destroyed = false;
-                cout<< car.lifes <<endl;
+                cout<<"Me queda vidas" << car.lifes <<endl;
             }
             GLfloat dist2 = collision(knife.knifePosition, woods[i].woodPosition);
             if ( dist2<2.0f ){
@@ -813,7 +818,7 @@ int main( )
         }
         for (int i = 0; i < fences.size(); i++) {
             GLfloat dist = collision(car.playerPosition, fences[i].fencePosition);
-            if (dist<1.5f && car.defense == true){
+            if (dist<2.5f && car.defense == true){
                 fences[i].destroyed = true;
                 glm::vec3 newPosition = positionRandom();
                 fences[i].fencePosition = newPosition;
@@ -826,7 +831,7 @@ int main( )
                 glm::vec3 newPosition = positionRandom();
                 fences[i].fencePosition = newPosition;
                 fences[i].destroyed = false;
-                cout<< car.lifes <<endl;
+                cout<<"Me queda vidas" << car.lifes <<endl;
             }
 
             GLfloat dist2 = collision(knife.knifePosition, fences[i].fencePosition);
@@ -851,7 +856,7 @@ int main( )
         }
         for (int i = 0; i < personas.size(); i++) {
             GLfloat dist = collision(car.playerPosition, personas[i].personaPosition);
-            if (dist<1.5f && car.defense == true){
+            if (dist<2.5f && car.defense == true){
                 // cout<<"hubo una collision";
                 personas[i].destroyed = true;
                 glm::vec3 newPosition = positionRandom();
@@ -866,7 +871,7 @@ int main( )
                 glm::vec3 newPosition = positionRandom();
                 personas[i].personaPosition = newPosition;
                 personas[i].destroyed = false;
-                cout<< car.lifes <<endl;
+                cout<<"Me queda vidas"<< car.lifes <<endl;
             }
             GLfloat dist2 = collision(knife.knifePosition, personas[i].personaPosition);
             if ( dist2<1.5f ){
@@ -886,44 +891,6 @@ int main( )
                 personas[i].dePause();
             }
             personas[i].movement(modelLoc, viewLoc, projLoc, shader, personaModel ,view, projection, model, deltaTime);
-        }
-        for (int i = 0; i < troncos.size(); i++) {
-            GLfloat dist = collision(car.playerPosition, troncos[i].troncoPosition);
-            if (dist<1.5f && car.defense == true){
-                // cout<<"hubo una collision";
-                troncos[i].destroyed = true;
-                glm::vec3 newPosition = positionRandom();
-                troncos[i].troncoPosition = newPosition;
-                troncos[i].destroyed = false;
-                car.defense = false;
-                //                cout<<"Colision con una manzana"<<endl;
-            }
-            if (dist<1.5f && car.defense == false) {
-                car.lifes = car.lifes -1;
-                troncos[i].destroyed = true;
-                glm::vec3 newPosition = positionRandom();
-                troncos[i].troncoPosition = newPosition;
-                troncos[i].destroyed = false;
-                cout<< car.lifes <<endl;
-            }
-            GLfloat dist2 = collision(knife.knifePosition, troncos[i].troncoPosition);
-            if ( dist2<1.5f ){
-                // cout<<"hubo una collision";
-                troncos[i].destroyed = true;
-                glm::vec3 newPosition = positionRandom();
-                troncos[i].troncoPosition = newPosition;
-                troncos[i].destroyed = false;
-                car.attack = false;
-                knife.knifePosition =glm::vec3 (0.0, -14.f, 0.0f);
-                //                cout<<"Colision con una manzana"<<endl;
-            }
-            if (pausando == true) {
-                troncos[i].noMove();
-            }
-            if (pausando == false) {
-                troncos[i].dePause();
-            }
-            troncos[i].movement(modelLoc, viewLoc, projLoc, shader, troncoModel ,view, projection, model, deltaTime);
         }
         for (int i = 0; i < manzanas.size(); i++) {
             GLfloat dist = collision(car.playerPosition, manzanas[i].manzanaPosition);
@@ -946,7 +913,7 @@ int main( )
         }
         for (int i = 0; i < rocks.size(); i++) {
             GLfloat dist = collision(car.playerPosition, rocks[i].rockPosition);
-            if (dist<1.5f && car.defense == true){
+            if (dist<2.5f && car.defense == true){
                 // cout<<"hubo una collision";
                 rocks[i].destroyed = true;
                 glm::vec3 newPosition = positionRandom();
@@ -962,7 +929,7 @@ int main( )
                 rocks[i].rockPosition = newPosition;
                 rocks[i].destroyed = false;
 
-                cout<< car.lifes <<endl;
+                cout<<"Me queda vidas"<< car.lifes <<endl;
             }
             GLfloat dist2 = collision(knife.knifePosition, rocks[i].rockPosition);
             if ( dist2<1.5f ){
@@ -986,7 +953,7 @@ int main( )
         }
         for (int i = 0; i < proyectiles.size(); i++) {
             GLfloat dist = collision(car.playerPosition, proyectiles[i].proyectilPosition);
-            if (dist<1.5f && car.defense == true){
+            if (dist<2.5f && car.defense == true){
                 // cout<<"hubo una collision";
                 proyectiles[i].destroyed = true;
                 glm::vec3 newPosition = positionRandom();
@@ -1001,7 +968,7 @@ int main( )
                 glm::vec3 newPosition = positionRandom();
                 proyectiles[i].proyectilPosition = newPosition;
                 proyectiles[i].destroyed = false;
-                cout<< car.lifes <<endl;
+                cout<<"me queda vidas"<< car.lifes <<endl;
             }
             GLfloat dist2 = collision(knife.knifePosition, proyectiles[i].proyectilPosition);
             if ( dist2<1.5f ){
@@ -1107,6 +1074,7 @@ void MoveCar(){
     }
     if ( keys[GLFW_KEY_DOWN] ) {
         car.ProcessKeyboard( PROTECT, deltaTime );
+        car.defense = true;
     }
     /*if ( keys[GLFW_KEY_V] ) {
         car.ProcessKeyboard(DEPROTECT, deltaTime);
