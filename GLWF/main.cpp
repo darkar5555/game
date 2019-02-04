@@ -47,8 +47,12 @@ const GLuint WIDTH = 800, HEIGHT = 600;
 int SCREEN_WIDTH, SCREEN_HEIGHT;
 
 Mix_Chunk *sound = NULL;
-    Mix_Chunk *sound2=NULL;
-    int channel;
+Mix_Chunk *sound2=NULL;
+Mix_Chunk *sound_wood=NULL;
+Mix_Chunk *sound_eat=NULL;
+Mix_Chunk *sound_knife=NULL;
+int channel;
+int channel2;
 // Function prototypes
 void KeyCallback( GLFWwindow *window, int key, int scancode, int action, int mode );
 void MouseCallback( GLFWwindow *window, double xPos, double yPos );
@@ -468,6 +472,9 @@ int main( )
     }
     sound = Mix_LoadWAV("resources/music/Dystopic-Mayhem.wav");
     sound2 = Mix_LoadWAV("resources/music/jump.wav");
+    sound_eat = Mix_LoadWAV("resources/music/eat.wav");
+    sound_wood = Mix_LoadWAV("resources/music/wood.wav");
+    sound_knife = Mix_LoadWAV("resources/music/throw-knife.wav");
     if(sound == NULL) {
             printf("Unable to load WAV file: %s\n", Mix_GetError());
     }
@@ -652,7 +659,7 @@ int main( )
 
         //cargando menu opciones
 
-        glUniformMatrix4fv( viewLoc, 1, GL_FALSE, glm::value_ptr( view ) );
+        /*glUniformMatrix4fv( viewLoc, 1, GL_FALSE, glm::value_ptr( view ) );
         glUniformMatrix4fv( projLoc, 1, GL_FALSE, glm::value_ptr( projection ) );
         glActiveTexture( GL_TEXTURE0 );
         glBindTexture( GL_TEXTURE_2D, textureop );
@@ -664,7 +671,7 @@ int main( )
         model = glm::scale( model, glm::vec3( 7.0f,4.f,2.f )); // Make it a smaller cube
         glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
         glDrawArrays( GL_TRIANGLES, 0, 8 );
-        glBindVertexArray( 0 );
+        glBindVertexArray( 0 );*/
 
 
 
@@ -922,6 +929,7 @@ int main( )
             if (dist<1.5f){
                 // cout<<"hubo una collision";
                 manzanas[i].destroyed = true;
+                channel = Mix_PlayChannel(1, sound_eat, 0);
                 glm::vec3 newPosition = positionRandom();
                 manzanas[i].manzanaPosition = newPosition;
                 manzanas[i].destroyed = false;
@@ -1105,6 +1113,7 @@ void MoveCar(){
     if ( keys[GLFW_KEY_SPACE] ) {
         car.attack = true;
         //        knife.dropped = true;
+        channel = Mix_PlayChannel(-1, sound_knife, 0);
         knife.knifePosition = car.playerPosition;
     }
     if ( keys[GLFW_KEY_V] ) {
